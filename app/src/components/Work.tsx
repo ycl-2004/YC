@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { asset } from '../lib/asset'
 
 type MotionPortraitProps = {
@@ -8,12 +9,37 @@ type MotionPortraitProps = {
 }
 
 function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortraitProps) {
+  const [animationReady, setAnimationReady] = useState(false)
+  const [animationFailed, setAnimationFailed] = useState(false)
+  const prefersReducedMotion =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
   return (
     <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
-      <picture className="motion-picture">
-        <source media="(prefers-reduced-motion: reduce)" srcSet={asset(staticSrc)} />
-        <img className="pillar-img" src={asset(animatedSrc)} alt={alt} loading="lazy" />
-      </picture>
+      <div className="motion-picture">
+        {/* Show the small first frame straight away; the 6–9 MB SVG replaces it only after decoding. */}
+        <img
+          className="pillar-img motion-static"
+          src={asset(staticSrc)}
+          alt={alt}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+        />
+        {!prefersReducedMotion && !animationFailed && (
+          <img
+            className={`pillar-img motion-animation${animationReady ? ' is-ready' : ''}`}
+            src={asset(animatedSrc)}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            fetchPriority="low"
+            onLoad={() => setAnimationReady(true)}
+            onError={() => setAnimationFailed(true)}
+          />
+        )}
+      </div>
     </button>
   )
 }

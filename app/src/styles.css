@@ -666,9 +666,13 @@ footer .totop:hover{opacity:1;}
 .motion-portrait::after{content:''; position:absolute; left:18%; right:16%; bottom:5px; height:13px; border-radius:50%;
   background:rgba(26,26,46,.13); filter:blur(7px); transform:scaleX(.82); z-index:0;}
 .motion-portrait > span,.motion-portrait i{position:absolute; pointer-events:none;}
-.motion-picture{display:block; width:100%; height:100%; cursor:zoom-in;}
+.motion-picture{position:relative; display:block; width:100%; height:100%; cursor:zoom-in;}
 .motion-portrait .pillar-img{position:relative; right:auto; bottom:auto; display:block; width:100%; height:100%; object-fit:contain; opacity:.98; pointer-events:none;
   filter:none; animation:none; transform:none; z-index:2;}
+/* The PNG is the instant, reliable first paint.  Keep it in place until the
+   large animated SVG has finished downloading and decoding, then cross-fade. */
+.motion-picture .motion-animation{position:absolute; inset:0; opacity:0; transition:opacity .16s ease;}
+.motion-picture .motion-animation.is-ready{opacity:.98;}
 .motion-portrait > span{z-index:3;}
 .motion-ai,.motion-design,.motion-music,.motion-photo{width:var(--portrait-size);}
 .motion-ai::before{background:radial-gradient(circle at 58% 36%,rgba(255,255,255,.82),rgba(255,255,255,0) 58%),

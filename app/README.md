@@ -40,6 +40,16 @@ The original static site remains at the repository root as a local fallback and
 reference. Keep its UI changes in sync only while it is still needed; GitHub
 Pages serves the React build.
 
+### Animated portraits
+
+The five portrait animations are large SVG files with embedded frame images.
+`index.html` preloads each lightweight first-frame PNG so a visitor sees every
+portrait immediately. `MotionPortrait` then downloads the SVG at low priority
+and fades it over the PNG only after it has decoded. Visitors who prefer
+reduced motion keep the first frame and do not download the animation. Keep
+both assets together: removing the first frame brings back the blank delay on a
+cold network cache.
+
 ## Notes
 
 - The name-card avatar that was an inline base64 image is now a real file at
