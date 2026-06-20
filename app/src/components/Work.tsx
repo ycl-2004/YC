@@ -1,27 +1,68 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { asset } from '../lib/asset'
+
+type FrameSequence = {
+  directory: string
+  frameCount: number
+  intervalMs: number
+  version: string
+}
 
 type MotionPortraitProps = {
   variant: 'ai' | 'design' | 'music' | 'read' | 'photo'
   animatedSrc?: string
+  frameSequence?: FrameSequence
   staticSrc: string
   alt: string
 }
 
-function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortraitProps) {
+function MotionPortrait({ variant, animatedSrc, frameSequence, staticSrc, alt }: MotionPortraitProps) {
   const [animationReady, setAnimationReady] = useState(false)
   const [animationFailed, setAnimationFailed] = useState(false)
+  const [frameIndex, setFrameIndex] = useState(0)
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const shouldLoadAnimation = Boolean(animatedSrc) && !prefersReducedMotion && !animationFailed
+  const usesFrameSequence = Boolean(frameSequence) && !prefersReducedMotion
+  const shouldLoadAnimation = Boolean(animatedSrc) && !usesFrameSequence && !prefersReducedMotion && !animationFailed
+  const currentFrameSrc =
+    usesFrameSequence && frameSequence
+      ? `${frameSequence.directory}/frame_${String(frameIndex + 1).padStart(2, '0')}.png?v=${frameSequence.version}`
+      : staticSrc
+
+  useEffect(() => {
+    if (!frameSequence || prefersReducedMotion) {
+      setFrameIndex(0)
+      return
+    }
+
+    const frameSources = Array.from({ length: frameSequence.frameCount }, (_, index) =>
+      asset(`${frameSequence.directory}/frame_${String(index + 1).padStart(2, '0')}.png?v=${frameSequence.version}`),
+    )
+    frameSources.forEach((source) => {
+      const frame = new Image()
+      frame.src = source
+    })
+
+    const timer = window.setInterval(() => {
+      setFrameIndex((current) => (current + 1) % frameSequence.frameCount)
+    }, frameSequence.intervalMs)
+
+    return () => window.clearInterval(timer)
+  }, [
+    frameSequence?.directory,
+    frameSequence?.frameCount,
+    frameSequence?.intervalMs,
+    frameSequence?.version,
+    prefersReducedMotion,
+  ])
 
   return (
     <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
-      <div className={`motion-picture${animationReady ? ' animation-ready' : ''}`}>
-        {/* Show the small first frame straight away; the 6–9 MB SVG replaces it only after decoding. */}
+      <div className={`motion-picture${animationReady ? ' animation-ready' : ''}${usesFrameSequence ? ' frame-sequence' : ''}`}>
+        {/* The reading scene advances through its PNG frames directly: this avoids browser-specific SVG image offsets. */}
         <img
           className="pillar-img motion-static"
-          src={asset(staticSrc)}
+          src={asset(currentFrameSrc)}
           alt={alt}
           loading="eager"
           decoding="async"
@@ -130,6 +171,12 @@ export default function Work() {
           <div className="pillar span2 reveal reveal-d1">
             <MotionPortrait
               variant="read"
+              frameSequence={{
+                directory: 'assets/animate_svg/img_4/frames',
+                frameCount: 16,
+                intervalMs: 688,
+                version: '4',
+              }}
               staticSrc="assets/animate_svg/img_4/frames/frame_01.png?v=4"
               alt="YC 坐在一摞书上专注阅读"
             />
