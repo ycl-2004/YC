@@ -19,7 +19,7 @@ const FRAME_COUNT = 16
 // Hover scales the card up first, then playback starts once it has grown
 // (matches the .ward-frame grow transition in styles.css).
 const ENLARGE_MS = 300
-const CLIP_ASSET_VERSION = 'frames-16-clean-v6'
+const CLIP_ASSET_VERSION = 'frames-16-clean-v7'
 
 const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}`
 

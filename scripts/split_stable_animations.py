@@ -61,6 +61,8 @@ class Sheet:
     clear_number_label: bool = False
     barrier_expand: int = BARRIER_EXPAND
     crop_inset_px: int = 0
+    crop_top_px: int | None = None
+    frame_padding_px: int = 0
     clear_bright_edges: bool = False
 
 
@@ -74,6 +76,8 @@ SHEETS = [
         "listen-music",
         barrier_expand=15,
         crop_inset_px=10,
+        crop_top_px=0,
+        frame_padding_px=12,
         clear_bright_edges=True,
     ),
     Sheet("img_stable_3.png", "adjust-glasses-cool"),
@@ -408,6 +412,19 @@ def remove_small_islands(frame: Image.Image) -> Image.Image:
     return rgba
 
 
+def add_frame_padding(frame: Image.Image, padding: int) -> Image.Image:
+    """Inset a cleaned frame inside the same canvas to keep hover-scale edges safe."""
+    if padding <= 0:
+        return frame
+    width, height = frame.size
+    inner_width = width - padding * 2
+    inner_height = height - padding * 2
+    resized = frame.resize((inner_width, inner_height), Image.LANCZOS)
+    padded = Image.new("RGBA", (width, height), (0, 0, 0, 0))
+    padded.paste(resized, (padding, padding), resized)
+    return padded
+
+
 def split_sheet(sheet: Sheet) -> int:
     source = RAW_DIR / sheet.source
     image = Image.open(source).convert("RGB")
@@ -429,7 +446,8 @@ def split_sheet(sheet: Sheet) -> int:
     for row in range(GRID):
         for col in range(GRID):
             inset = sheet.crop_inset_px
-            cell = image.crop((xs[col] + inset, ys[row] + inset, xs[col + 1] - inset, ys[row + 1] - inset))
+            top_inset = inset if sheet.crop_top_px is None else sheet.crop_top_px
+            cell = image.crop((xs[col] + inset, ys[row] + top_inset, xs[col + 1] - inset, ys[row + 1] - inset))
             cell = cell.resize((CANVAS, CANVAS), Image.LANCZOS)
             frame = remove_background(cell, sheet.barrier_expand)
             if sheet.clear_number_label:
@@ -443,6 +461,7 @@ def split_sheet(sheet: Sheet) -> int:
                 clear_top_edge_artifacts(frame)
                 clear_top_card_edge(frame)
             frame = remove_small_islands(frame)
+            frame = add_frame_padding(frame, sheet.frame_padding_px)
             count += 1
             frame.save(out_dir / f"frame_{count:02d}.png")
 
