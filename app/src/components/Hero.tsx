@@ -1,6 +1,126 @@
+import { useState } from 'react'
+import type { CSSProperties } from 'react'
 import { asset } from '../lib/asset'
 
+// Each pose carries its own switch effect (`fx`) and entrance animation
+// (`enter`) so no two transitions feel the same.
+const POSES = [
+  { src: 'assets/stickers/yc-stand.png', label: '叉腰站立', fx: 'halo', enter: 'pop' },
+  { src: 'assets/stickers/yc-wave.png', label: '挥手打招呼', fx: 'wave', enter: 'tilt' },
+  { src: 'assets/stickers/yc-peace.png', label: '比耶', fx: 'star', enter: 'pop' },
+  { src: 'assets/stickers/yc-thumb.png', label: '点赞', fx: 'like', enter: 'pop' },
+  { src: 'assets/stickers/yc-cross.png', label: '抱臂', fx: 'cool', enter: 'slide' },
+  { src: 'assets/stickers/yc-jump.png', label: '起跳', fx: 'jump', enter: 'bounce' },
+  { src: 'assets/stickers/yc-heart.png', label: '比心', fx: 'heart', enter: 'soft' },
+  { src: 'assets/stickers/yc-cheer.png', label: '欢呼', fx: 'cheer', enter: 'pop' },
+]
+
+const cv = (o: Record<string, string | number>) => o as CSSProperties
+
+// Even ring of N particles, centred on the figure.
+const radial = (n: number, dist: number) =>
+  Array.from({ length: n }, (_, k) => {
+    const a = (k / n) * Math.PI * 2 - Math.PI / 2
+    return cv({
+      '--tx': `${Math.round(Math.cos(a) * dist)}px`,
+      '--ty': `${Math.round(Math.sin(a) * dist)}px`,
+      '--d': `${(k % 4) * 0.025}s`,
+    })
+  })
+
+const CONFETTI = ['#e8657a', '#5b8cd1', '#f4b740', '#5E8C68', '#b23a48']
+
+function fxParticles(fx: string) {
+  switch (fx) {
+    case 'star': // peace → gold starburst
+      return radial(7, 96).map((s, k) => (
+        <i key={k} className="st" style={s}>
+          {['✦', '✧', '★'][k % 3]}
+        </i>
+      ))
+    case 'cheer': // cheer → colorful confetti explosion
+      return radial(12, 112).map((s, k) => (
+        <i key={k} className="cf" style={cv({ ...(s as object), '--c': CONFETTI[k % CONFETTI.length] })} />
+      ))
+    case 'heart': // heart → stream of hearts floating up
+      return Array.from({ length: 7 }, (_, k) => (
+        <i
+          key={k}
+          className="ht"
+          style={cv({
+            '--x': `${(k - 3) * 16}px`,
+            '--drift': `${(k % 2 ? 1 : -1) * 14}px`,
+            '--d': `${k * 0.06}s`,
+            fontSize: `${0.8 + (k % 3) * 0.35}rem`,
+          })}
+        >
+          ♥
+        </i>
+      ))
+    case 'wave': // wave → dots fanning up from the hand
+      return Array.from({ length: 5 }, (_, k) => {
+        const ang = ((-150 + k * 22) * Math.PI) / 180
+        const dist = 34 + k * 5
+        return (
+          <i
+            key={k}
+            className="d"
+            style={cv({
+              '--tx': `${Math.round(Math.cos(ang) * dist)}px`,
+              '--ty': `${Math.round(Math.sin(ang) * dist)}px`,
+              '--d': `${k * 0.05}s`,
+            })}
+          />
+        )
+      })
+    case 'like': // thumbs up → 👍 and +1 rising
+      return [
+        <i key="t" className="lk thumb" style={cv({ '--x': '0px', '--d': '0s' })}>
+          👍
+        </i>,
+        ...([
+          ['+1', '-26px', '.08s'],
+          ['+1', '24px', '.16s'],
+          ['♥', '-6px', '.24s'],
+        ] as const).map(([t, x, d], k) => (
+          <i key={k} className="lk plus" style={cv({ '--x': x, '--d': d })}>
+            {t}
+          </i>
+        )),
+      ]
+    case 'cool': // arms crossed → shutter glint sweep + glasses sparkle
+      return [
+        <span key="g" className="glint" />,
+        <i key="a" className="gl" style={cv({ left: '40%', top: '40%', '--d': '.12s' })}>
+          ✦
+        </i>,
+        <i key="b" className="gl" style={cv({ left: '58%', top: '40%', '--d': '.2s' })}>
+          ✦
+        </i>,
+      ]
+    case 'jump': // jump → dust puff at feet + upward energy streaks
+      return [
+        <span key="d" className="dust" />,
+        ...Array.from({ length: 5 }, (_, k) => (
+          <i key={k} className="ln" style={cv({ '--x': `${(k - 2) * 22}px`, '--d': `${k * 0.04}s` })} />
+        )),
+      ]
+    case 'halo': // calm → soft halo pulse, no particles
+    default:
+      return [<span key="r1" className="hl" />, <span key="r2" className="hl r2" />]
+  }
+}
+
 export default function Hero() {
+  const [pose, setPose] = useState(0)
+  const [clicks, setClicks] = useState(0)
+  const [tapped, setTapped] = useState(false)
+  const nextPose = () => {
+    setPose((p) => (p + 1) % POSES.length)
+    setClicks((c) => c + 1)
+    setTapped(true)
+  }
+  const current = POSES[pose]
   return (
     <header className="hero">
       <div className="aurora" aria-hidden="true">
@@ -83,11 +203,27 @@ export default function Hero() {
           <div className="fig-ring r2"></div>
           <div className="fig-disc"></div>
           <span className="fig-beam" aria-hidden="true"></span>
-          <img
-            className="fig-img"
-            src={asset('assets/stickers/pose-standing.png')}
-            alt="YC 本人 · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象"
-          />
+          <button
+            type="button"
+            className="fig-figure"
+            onClick={nextPose}
+            aria-label={`YC 的 chibi 形象，当前造型「${current.label}」，点击换下一个造型`}
+          >
+            <img
+              key={pose}
+              className={`fig-img enter-${current.enter}`}
+              src={asset(current.src)}
+              alt={`YC 本人 · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象（${current.label}）`}
+            />
+          </button>
+          {clicks > 0 && (
+            <span className={`fig-fx fx-${current.fx}`} key={clicks} aria-hidden="true">
+              {fxParticles(current.fx)}
+            </span>
+          )}
+          <span className={`fig-hint${tapped ? ' is-hidden' : ''}`} aria-hidden="true">
+            👆 点我换造型
+          </span>
           <span className="fig-heart" aria-hidden="true">
             ♥
           </span>
