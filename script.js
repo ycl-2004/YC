@@ -46,6 +46,44 @@
     document.addEventListener('keydown',function(e){ if(!lb.classList.contains('open')) return; if(e.key==='Escape') closeLightbox(); else if(e.key==='ArrowLeft') openLightbox(lbI-1); else if(e.key==='ArrowRight') openLightbox(lbI+1); });
   }
 
+  /* ---- portrait animation lightbox ---- */
+  var pl=document.getElementById('portraitLightbox'), plImg=document.getElementById('portraitLbImg'), plCap=document.getElementById('portraitLbCap');
+  var portraitOpener=null;
+  function openPortraitLightbox(portrait){
+    if(!pl || !plImg) return;
+    var img=portrait.querySelector('.pillar-img');
+    if(!img) return;
+    var card=portrait.closest('.pillar');
+    var en=card && card.querySelector('.en') ? card.querySelector('.en').textContent : '';
+    var title=card && card.querySelector('h3') ? card.querySelector('h3').textContent : '';
+    plImg.src=img.currentSrc || img.getAttribute('src') || '';
+    plImg.alt=img.alt || title || 'YC 角色动画';
+    if(plCap) plCap.textContent=[en,title].filter(Boolean).join(' · ');
+    portraitOpener=portrait;
+    pl.classList.add('open');
+    document.body.style.overflow='hidden';
+    var close=pl.querySelector('.portrait-lightbox-close');
+    if(close) close.focus();
+  }
+  function closePortraitLightbox(){
+    if(!pl) return;
+    pl.classList.remove('open');
+    document.body.style.overflow='';
+    if(portraitOpener) portraitOpener.focus();
+    portraitOpener=null;
+  }
+  if(pl){
+    pl.querySelectorAll('[data-close]').forEach(function(el){ el.addEventListener('click',closePortraitLightbox); });
+    document.addEventListener('keydown',function(e){
+      if(!pl.classList.contains('open')) return;
+      if(e.key==='Escape') closePortraitLightbox();
+      else if(e.key==='Tab') e.preventDefault();
+    });
+  }
+  document.querySelectorAll('.motion-portrait').forEach(function(portrait){
+    portrait.addEventListener('click',function(e){ e.stopPropagation(); openPortraitLightbox(portrait); });
+  });
+
   /* ---- reveal on scroll ---- */
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
@@ -228,7 +266,7 @@
   if(finaleBtn){ finaleBtn.addEventListener('click', function(e){ burstHearts(e.clientX,e.clientY); }); }
 
   /* ---- click a character → springy hop ---- */
-  document.querySelectorAll('.pillar-img,.cta-avatar,.ward-rail img,.values-float').forEach(function(img){
+  document.querySelectorAll('.cta-avatar,.ward-rail img,.values-float').forEach(function(img){
     img.addEventListener('click',function(){
       img.classList.remove('hop');           // restart if mid-animation
       void img.offsetWidth;                   // reflow so the class re-applies

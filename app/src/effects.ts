@@ -110,6 +110,50 @@ export function initEffects(): void {
     })
   }
 
+  /* ---- portrait animation lightbox ---- */
+  const pl = document.getElementById('portraitLightbox')
+  const plImg = document.getElementById('portraitLbImg') as HTMLImageElement | null
+  const plCap = document.getElementById('portraitLbCap')
+  let portraitOpener: HTMLElement | null = null
+  function openPortraitLightbox(portrait: HTMLElement) {
+    if (!pl || !plImg) return
+    const img = portrait.querySelector<HTMLImageElement>('.pillar-img')
+    if (!img) return
+    const card = portrait.closest('.pillar')
+    const en = card?.querySelector('.en')?.textContent || ''
+    const title = card?.querySelector('h3')?.textContent || ''
+    plImg.src = img.currentSrc || img.getAttribute('src') || ''
+    plImg.alt = img.alt || title || 'YC 角色动画'
+    if (plCap) plCap.textContent = [en, title].filter(Boolean).join(' · ')
+    portraitOpener = portrait
+    pl.classList.add('open')
+    document.body.style.overflow = 'hidden'
+    pl.querySelector<HTMLButtonElement>('.portrait-lightbox-close')?.focus()
+  }
+  function closePortraitLightbox() {
+    if (!pl) return
+    pl.classList.remove('open')
+    document.body.style.overflow = ''
+    portraitOpener?.focus()
+    portraitOpener = null
+  }
+  if (pl) {
+    pl.querySelectorAll('[data-close]').forEach((el) => {
+      el.addEventListener('click', closePortraitLightbox)
+    })
+    document.addEventListener('keydown', (e) => {
+      if (!pl.classList.contains('open')) return
+      if (e.key === 'Escape') closePortraitLightbox()
+      else if (e.key === 'Tab') e.preventDefault()
+    })
+  }
+  document.querySelectorAll<HTMLElement>('.motion-portrait').forEach((portrait) => {
+    portrait.addEventListener('click', (e) => {
+      e.stopPropagation()
+      openPortraitLightbox(portrait)
+    })
+  })
+
   /* ---- reveal on scroll ---- */
   const io = new IntersectionObserver(
     (entries) => {
@@ -458,7 +502,7 @@ export function initEffects(): void {
   if (finaleBtn) finaleBtn.addEventListener('click', (e) => burstHearts(e.clientX, e.clientY))
 
   /* ---- click a character → springy hop ---- */
-  document.querySelectorAll<HTMLElement>('.pillar-img,.cta-avatar,.ward-rail img,.values-float').forEach((img) => {
+  document.querySelectorAll<HTMLElement>('.cta-avatar,.ward-rail img,.values-float').forEach((img) => {
     img.addEventListener('click', () => {
       img.classList.remove('hop')
       void img.offsetWidth // reflow so the class re-applies

@@ -38,23 +38,35 @@ export default function Hero() {
             找到我 <span className="ar">→</span>
           </a>
         </div>
-        <div className="hero-stats">
-          <div className="st">
-            <div className="n" data-count="5">
-              0
+          <div className="hero-stats">
+            <div className="st">
+              <div className="n" data-count="5">
+                0
+              </div>
+              <div className="l">
+                <span>创作方向</span>
+                <i aria-hidden="true">·</i>
+                <span className="stat-en">directions</span>
+              </div>
             </div>
-            <div className="l">创作方向 · directions</div>
-          </div>
-          <div className="st">
-            <div className="n" data-count="8">
-              0
+            <div className="st">
+              <div className="n" data-count="8">
+                0
+              </div>
+              <div className="l">
+                <span>性格标签</span>
+                <i aria-hidden="true">·</i>
+                <span className="stat-en">traits</span>
+              </div>
             </div>
-            <div className="l">性格标签 · traits</div>
-          </div>
-          <div className="st">
-            <div className="n">∞</div>
-            <div className="l">可能性 · possibilities</div>
-          </div>
+            <div className="st">
+              <div className="n">∞</div>
+              <div className="l">
+                <span>可能性</span>
+                <i aria-hidden="true">·</i>
+                <span className="stat-en">possibilities</span>
+              </div>
+            </div>
         </div>
       </div>
 
@@ -72,15 +84,17 @@ export default function Hero() {
           <span className="fig-heart" aria-hidden="true">
             ♥
           </span>
-          <span className="fig-badge b1">
-            <span className="e">⌨️</span>coding
-          </span>
-          <span className="fig-badge b2">
-            <span className="e">♪</span>music
-          </span>
-          <span className="fig-badge b3">
-            <span className="e">📚</span>always learning
-          </span>
+          <div className="fig-badges" aria-label="YC 的兴趣标签">
+            <span className="fig-badge b1">
+              <span className="e">⌨️</span>coding
+            </span>
+            <span className="fig-badge b2">
+              <span className="e">♪</span>music
+            </span>
+            <span className="fig-badge b3">
+              <span className="e">📚</span>always learning
+            </span>
+          </div>
           <span className="fig-note script">红发 + 眼镜，认准我</span>
         </div>
       </div>

@@ -1,8 +1,8 @@
 # YC Website — React + Tailwind
 
-React + TypeScript + Vite port of the original static site. Same exact view,
-restructured into components so it's ready for future expansion (routing, a CMS,
-shadcn/ui components, etc.).
+React + TypeScript + Vite version of the YC personal site. It is the deployed
+version, structured into components so it is ready for future expansion
+(routing, a CMS, shadcn/ui components, etc.).
 
 ## Run it
 
@@ -30,11 +30,17 @@ npm run preview  # serve the production build locally
 - Brand colors and fonts are mirrored into `tailwind.config.js`
   (`bg-wine`, `text-denim`, `font-serif`, …) for new components.
 
+## Deployment
+
+GitHub Pages builds this directory with `npm ci && npm run build` and publishes
+`app/dist`. The `base: './'` Vite setting keeps generated asset URLs portable for
+the repository Pages path.
+
+The original static site remains at the repository root as a local fallback and
+reference. Keep its UI changes in sync only while it is still needed; GitHub
+Pages serves the React build.
+
 ## Notes
 
-- The original static site still lives at the repo root and is what GitHub Pages
-  currently deploys. This `app/` build is not wired into the Pages workflow yet —
-  switch the deploy to build `app/` (or move it to the root) once you've verified
-  the React version in a browser.
 - The name-card avatar that was an inline base64 image is now a real file at
   `public/assets/stickers/nc-char.png`.

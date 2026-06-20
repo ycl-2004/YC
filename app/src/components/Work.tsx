@@ -1,5 +1,23 @@
 import { asset } from '../lib/asset'
 
+type MotionPortraitProps = {
+  variant: 'ai' | 'design' | 'music' | 'read' | 'photo'
+  animatedSrc: string
+  staticSrc: string
+  alt: string
+}
+
+function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortraitProps) {
+  return (
+    <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
+      <picture className="motion-picture">
+        <source media="(prefers-reduced-motion: reduce)" srcSet={asset(staticSrc)} />
+        <img className="pillar-img" src={asset(animatedSrc)} alt={alt} loading="lazy" />
+      </picture>
+    </button>
+  )
+}
+
 export default function Work() {
   return (
     <section className="pad" id="work">
@@ -23,11 +41,11 @@ export default function Work() {
               <span>No-code</span>
               <span>Web Dev</span>
             </div>
-            <img
-              className="pillar-img"
-              src={asset('assets/stickers/pose-thinking.png')}
-              alt="YC 在思考，旁边有 AI 对话气泡"
-              loading="lazy"
+            <MotionPortrait
+              variant="ai"
+              animatedSrc="assets/animate_svg/img_1/animation.svg?v=4"
+              staticSrc="assets/animate_svg/img_1/frames/frame_01.png?v=4"
+              alt="YC 坐着使用笔记本电脑写代码和构建 AI 工具"
             />
           </div>
           <div className="pillar reveal reveal-d2">
@@ -46,11 +64,11 @@ export default function Work() {
               <span>Brand</span>
               <span>Content</span>
             </div>
-            <img
-              className="pillar-img"
-              src={asset('assets/stickers/v-draw.png')}
-              alt="YC 穿蓝色卫衣在平板上画草图、记录灵感"
-              loading="lazy"
+            <MotionPortrait
+              variant="design"
+              animatedSrc="assets/animate_svg/img_2/animation.svg?v=4"
+              staticSrc="assets/animate_svg/img_2/frames/frame_01.png?v=4"
+              alt="YC 在笔记本上写字，记录灵感和规划想法"
             />
           </div>
           <div className="pillar reveal reveal-d3">
@@ -60,22 +78,22 @@ export default function Work() {
             <h3>用音乐表达情绪</h3>
             <div className="kw">
               <span>Beat Making</span>
-              <span>Covers</span>
+              <span>Keys</span>
               <span>Mood</span>
             </div>
-            <img
-              className="pillar-img"
-              src={asset('assets/stickers/v-guitar.png')}
-              alt="YC 抱着吉他弹唱、创作音乐"
-              loading="lazy"
+            <MotionPortrait
+              variant="music"
+              animatedSrc="assets/animate_svg/img_6/animation.svg?v=7"
+              staticSrc="assets/animate_svg/img_6/frames/frame_01.png?v=7"
+              alt="YC 坐着弹木吉他，投入地创作音乐"
             />
           </div>
           <div className="pillar span2 reveal reveal-d1">
-            <img
-              className="pillar-img"
-              src={asset('assets/stickers/v-reading-books.png')}
+            <MotionPortrait
+              variant="read"
+              animatedSrc="assets/animate_svg/img_4/animation.svg?v=4"
+              staticSrc="assets/animate_svg/img_4/frames/frame_01.png?v=4"
               alt="YC 坐在一摞书上专注阅读"
-              loading="lazy"
             />
             <div className="p-body">
               <span className="emoji">📚</span>
@@ -100,11 +118,11 @@ export default function Work() {
               <span>Nature</span>
               <span>Slow Living</span>
             </div>
-            <img
-              className="pillar-img"
-              src={asset('assets/stickers/v-camera.png')}
+            <MotionPortrait
+              variant="photo"
+              animatedSrc="assets/animate_svg/img_5/animation.svg?v=4"
+              staticSrc="assets/animate_svg/img_5/frames/frame_01.png?v=4"
               alt="YC 穿橄榄色外套拿着相机记录生活"
-              loading="lazy"
             />
           </div>
         </div>

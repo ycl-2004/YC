@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Caveat:wght@400;600;700&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body>
 
@@ -53,9 +53,9 @@
       <a href="#find" class="btn btn-ghost" data-magnetic>找到我 <span class="ar">→</span></a>
     </div>
     <div class="hero-stats">
-      <div class="st"><div class="n" data-count="5">0</div><div class="l">创作方向 · directions</div></div>
-      <div class="st"><div class="n" data-count="8">0</div><div class="l">性格标签 · traits</div></div>
-      <div class="st"><div class="n">∞</div><div class="l">可能性 · possibilities</div></div>
+      <div class="st"><div class="n" data-count="5">0</div><div class="l"><span>创作方向</span><i aria-hidden="true">·</i><span class="stat-en">directions</span></div></div>
+      <div class="st"><div class="n" data-count="8">0</div><div class="l"><span>性格标签</span><i aria-hidden="true">·</i><span class="stat-en">traits</span></div></div>
+      <div class="st"><div class="n">∞</div><div class="l"><span>可能性</span><i aria-hidden="true">·</i><span class="stat-en">possibilities</span></div></div>
     </div>
   </div>
 
@@ -67,9 +67,11 @@
       <span class="fig-beam" aria-hidden="true"></span>
       <img class="fig-img" src="assets/stickers/pose-standing.png" alt="YC 本人 · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象">
       <span class="fig-heart" aria-hidden="true">♥</span>
-      <span class="fig-badge b1"><span class="e">⌨️</span>coding</span>
-      <span class="fig-badge b2"><span class="e">♪</span>music</span>
-      <span class="fig-badge b3"><span class="e">📚</span>always learning</span>
+      <div class="fig-badges" aria-label="YC 的兴趣标签">
+        <span class="fig-badge b1"><span class="e">⌨️</span>coding</span>
+        <span class="fig-badge b2"><span class="e">♪</span>music</span>
+        <span class="fig-badge b3"><span class="e">📚</span>always learning</span>
+      </div>
       <span class="fig-note script">红发 + 眼镜，认准我</span>
     </div>
   </div>
@@ -142,7 +144,12 @@
         <span class="en">AI &amp; Coding</span>
         <h3>思考 · 构建 · 解决</h3>
         <div class="kw"><span>AI Tools</span><span>Automation</span><span>No-code</span><span>Web Dev</span></div>
-        <img class="pillar-img" src="assets/stickers/pose-thinking.png" alt="YC 在思考，旁边有 AI 对话气泡" loading="lazy">
+        <button type="button" class="motion-portrait motion-ai" aria-label="放大查看角色动画">
+          <picture class="motion-picture">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/animate_svg/img_1/frames/frame_01.png?v=4">
+            <img class="pillar-img" src="assets/animate_svg/img_1/animation.svg?v=4" alt="YC 坐着使用笔记本电脑写代码和构建 AI 工具" loading="lazy">
+          </picture>
+        </button>
       </div>
       <div class="pillar reveal reveal-d2">
         <span class="pillar-bgnum">2</span>
@@ -152,18 +159,33 @@
         <span class="en">Design &amp; Ideas</span>
         <h3>记录灵感，规划未来</h3>
         <div class="kw"><span>Visual Design</span><span>Brand</span><span>Content</span></div>
-        <img class="pillar-img" src="assets/stickers/v-draw.png" alt="YC 穿蓝色卫衣在平板上画草图、记录灵感" loading="lazy">
+        <button type="button" class="motion-portrait motion-design" aria-label="放大查看角色动画">
+          <picture class="motion-picture">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/animate_svg/img_2/frames/frame_01.png?v=4">
+            <img class="pillar-img" src="assets/animate_svg/img_2/animation.svg?v=4" alt="YC 在笔记本上写字，记录灵感和规划想法" loading="lazy">
+          </picture>
+        </button>
       </div>
       <div class="pillar reveal reveal-d3">
         <span class="pillar-bgnum">3</span>
         <span class="emoji">♪</span>
         <span class="en">Music &amp; Creativity</span>
         <h3>用音乐表达情绪</h3>
-        <div class="kw"><span>Beat Making</span><span>Covers</span><span>Mood</span></div>
-        <img class="pillar-img" src="assets/stickers/v-guitar.png" alt="YC 抱着吉他弹唱、创作音乐" loading="lazy">
+        <div class="kw"><span>Beat Making</span><span>Keys</span><span>Mood</span></div>
+        <button type="button" class="motion-portrait motion-music" aria-label="放大查看角色动画">
+          <picture class="motion-picture">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/animate_svg/img_6/frames/frame_01.png?v=7">
+            <img class="pillar-img" src="assets/animate_svg/img_6/animation.svg?v=7" alt="YC 坐着弹木吉他，投入地创作音乐" loading="lazy">
+          </picture>
+        </button>
       </div>
       <div class="pillar span2 reveal reveal-d1">
-        <img class="pillar-img" src="assets/stickers/v-reading-books.png" alt="YC 坐在一摞书上专注阅读" loading="lazy">
+        <button type="button" class="motion-portrait motion-read" aria-label="放大查看角色动画">
+          <picture class="motion-picture">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/animate_svg/img_4/frames/frame_01.png?v=4">
+            <img class="pillar-img" src="assets/animate_svg/img_4/animation.svg?v=4" alt="YC 坐在一摞书上专注阅读" loading="lazy">
+          </picture>
+        </button>
         <div class="p-body">
           <span class="emoji">📚</span>
           <span class="en">Learning &amp; Books</span>
@@ -177,7 +199,12 @@
         <span class="en">Lifestyle &amp; Outdoor</span>
         <h3>享受生活，保持热爱</h3>
         <div class="kw"><span>City Walks</span><span>Nature</span><span>Slow Living</span></div>
-        <img class="pillar-img" src="assets/stickers/v-camera.png" alt="YC 穿橄榄色外套拿着相机记录生活" loading="lazy">
+        <button type="button" class="motion-portrait motion-photo" aria-label="放大查看角色动画">
+          <picture class="motion-picture">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/animate_svg/img_5/frames/frame_01.png?v=4">
+            <img class="pillar-img" src="assets/animate_svg/img_5/animation.svg?v=4" alt="YC 穿橄榄色外套拿着相机记录生活" loading="lazy">
+          </picture>
+        </button>
       </div>
     </div>
   </div>
@@ -307,6 +334,16 @@
   </figure>
 </div>
 
+<!-- ===== portrait animation lightbox ===== -->
+<div class="portrait-lightbox" id="portraitLightbox" role="dialog" aria-modal="true" aria-label="角色动画放大">
+  <div class="portrait-lightbox-backdrop" data-close></div>
+  <figure class="portrait-lightbox-shell">
+    <button type="button" class="portrait-lightbox-close" data-close aria-label="关闭">✕</button>
+    <img class="portrait-lightbox-img" id="portraitLbImg" src="" alt="">
+    <figcaption class="portrait-lightbox-cap" id="portraitLbCap"></figcaption>
+  </figure>
+</div>
+
 <p id="shareStatus" role="status" aria-live="polite" class="sr-status"></p>
 
 <footer>
@@ -327,6 +364,6 @@
 </footer>
 
 <script src="assets/html2canvas.min.js"></script>
-<script src="script.js?v=10"></script>
+<script src="script.js?v=11"></script>
 </body>
 </html>
