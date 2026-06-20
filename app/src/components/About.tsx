@@ -20,7 +20,7 @@ const FRAME_COUNT = 16
 // (matches the .ward-frame grow transition in styles.css).
 const ENLARGE_MS = 300
 const MOBILE_HOLD_MS = 650
-const CLIP_ASSET_VERSION = 'frames-16-clean-v7'
+const CLIP_ASSET_VERSION = 'frames-16-clean-v8'
 const WARDROBE_PLAY_EVENT = 'wardrobe-play'
 
 const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}`
@@ -101,7 +101,7 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
 
   const stopTimer = () => {
     if (timerRef.current !== undefined) {
-      window.clearInterval(timerRef.current)
+      window.clearTimeout(timerRef.current)
       timerRef.current = undefined
     }
   }
@@ -148,17 +148,29 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
   // a full PNG that replaces the previous, so no two poses overlap.
   const startTicking = (resetWhenDone = false) => {
     stopTimer()
-    if (frameRef.current >= FRAME_COUNT) {
-      if (resetWhenDone) scheduleReset()
-      return
-    }
-    timerRef.current = window.setInterval(() => {
-      showFrame(Math.min(frameRef.current + 1, FRAME_COUNT))
+    const advance = () => {
       if (frameRef.current >= FRAME_COUNT) {
-        stopTimer()
         if (resetWhenDone) scheduleReset()
+        return
       }
-    }, clip.frameMs)
+
+      const duration =
+        clip.slug === 'love-brain' && frameRef.current === 11
+          ? clip.frameMs * 2
+          : clip.frameMs
+
+      timerRef.current = window.setTimeout(() => {
+        timerRef.current = undefined
+        showFrame(Math.min(frameRef.current + 1, FRAME_COUNT))
+        if (frameRef.current >= FRAME_COUNT) {
+          if (resetWhenDone) scheduleReset()
+          return
+        }
+        advance()
+      }, duration)
+    }
+
+    advance()
   }
 
   // Hover: let the card grow first (CSS :hover scale), then play from frame 1.
@@ -216,7 +228,7 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
   return (
     <button
       type="button"
-      className={`ward-clip${isTapPlaying ? ' is-playing' : ''}`}
+      className={`ward-clip${isTapPlaying ? ' is-playing is-touch-playing' : ''}`}
       aria-label={`${clip.label} 动画预览（手机点按播放，桌面悬停播放）`}
       onBlur={reset}
       onFocus={() => {
