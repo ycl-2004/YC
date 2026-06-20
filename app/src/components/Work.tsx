@@ -16,7 +16,7 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
 
   return (
     <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
-      <div className="motion-picture">
+      <div className={`motion-picture${animationReady ? ' animation-ready' : ''}`}>
         {/* Show the small first frame straight away; the 6–9 MB SVG replaces it only after decoding. */}
         <img
           className="pillar-img motion-static"
@@ -25,6 +25,7 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
           loading="eager"
           decoding="async"
           fetchPriority="high"
+          style={{ opacity: animationReady ? 0 : undefined }}
         />
         {!prefersReducedMotion && !animationFailed && (
           <img
@@ -35,6 +36,7 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
             loading="eager"
             decoding="async"
             fetchPriority="low"
+            style={{ opacity: animationReady ? 0.98 : 0 }}
             onLoad={() => setAnimationReady(true)}
             onError={() => setAnimationFailed(true)}
           />

@@ -45,7 +45,8 @@ Pages serves the React build.
 The five portrait animations are large SVG files with embedded frame images.
 `index.html` preloads each lightweight first-frame PNG so a visitor sees every
 portrait immediately. `MotionPortrait` then downloads the SVG at low priority
-and fades it over the PNG only after it has decoded. Visitors who prefer
+and cross-fades to it only after it has decoded, hiding the PNG so its pixels
+cannot remain behind transparent animation frames. Visitors who prefer
 reduced motion keep the first frame and do not download the animation. Keep
 both assets together: removing the first frame brings back the blank delay on a
 cold network cache.

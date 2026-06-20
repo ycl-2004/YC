@@ -669,8 +669,11 @@ footer .totop:hover{opacity:1;}
 .motion-picture{position:relative; display:block; width:100%; height:100%; cursor:zoom-in;}
 .motion-portrait .pillar-img{position:relative; right:auto; bottom:auto; display:block; width:100%; height:100%; object-fit:contain; opacity:.98; pointer-events:none;
   filter:none; animation:none; transform:none; z-index:2;}
-/* The PNG is the instant, reliable first paint.  Keep it in place until the
-   large animated SVG has finished downloading and decoding, then cross-fade. */
+/* The PNG is only the instant, reliable first paint.  Hide it once the large
+   SVG has decoded; leaving it underneath transparent SVG frames creates a
+   frozen-image ghost (especially around moving hands). */
+.motion-picture .motion-static{transition:opacity .16s ease;}
+.motion-picture.animation-ready .motion-static{opacity:0;}
 .motion-picture .motion-animation{position:absolute; inset:0; opacity:0; transition:opacity .16s ease;}
 .motion-picture .motion-animation.is-ready{opacity:.98;}
 .motion-portrait > span{z-index:3;}
