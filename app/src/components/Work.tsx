@@ -3,7 +3,7 @@ import { asset } from '../lib/asset'
 
 type MotionPortraitProps = {
   variant: 'ai' | 'design' | 'music' | 'read' | 'photo'
-  animatedSrc: string
+  animatedSrc?: string
   staticSrc: string
   alt: string
 }
@@ -13,6 +13,7 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
   const [animationFailed, setAnimationFailed] = useState(false)
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const shouldLoadAnimation = Boolean(animatedSrc) && !prefersReducedMotion && !animationFailed
 
   return (
     <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
@@ -26,7 +27,7 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
           decoding="async"
           style={{ opacity: animationReady ? 0 : undefined }}
         />
-        {!prefersReducedMotion && !animationFailed && (
+        {shouldLoadAnimation && animatedSrc && (
           <img
             className={`pillar-img motion-animation${animationReady ? ' is-ready' : ''}`}
             src={asset(animatedSrc)}
@@ -129,7 +130,6 @@ export default function Work() {
           <div className="pillar span2 reveal reveal-d1">
             <MotionPortrait
               variant="read"
-              animatedSrc="assets/animate_svg/img_4/animation.svg?v=4"
               staticSrc="assets/animate_svg/img_4/frames/frame_01.png?v=4"
               alt="YC 坐在一摞书上专注阅读"
             />
