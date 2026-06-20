@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Split the five stable 4x4 YC animation sheets into 16 clean PNG frames each.
+"""Split the stable 4x4 YC animation sheets into 16 clean PNG frames each.
 
 Input:
     assets/animate_raw/img_stable_1.png ... img_stable_5.png
+    assets/animate_raw/img_stable_4_extra.png (love-brain ending frames only)
 
 Output (per pose):
     app/public/assets/animate_clips/wardrobe/<pose>/frame_01.png ... 16
@@ -14,6 +15,11 @@ each frame as a partial diff-rectangle with alpha blending, so a moving pose
 blends over leftovers of the previous frame -> visible ghosting / "残影". The
 web component instead swaps these full PNGs one at a time, so exactly one
 complete frame is ever on screen and frames can never overlap.
+
+Love-brain continuity
+---------------------
+Frames 1-11 come from ``img_stable_4.png``. Frames 12-16 use cells 12-16 of
+``img_stable_4_extra.png`` so the girl remains part of the animation ending.
 
 Background removal
 ------------------
@@ -55,6 +61,15 @@ MIN_ISLAND_PX = 90       # drop disconnected specks / stray lines below this siz
 
 
 @dataclass(frozen=True)
+class FrameOverride:
+    """Replace one output frame with a specific cell from another source sheet."""
+    target_frame: int
+    source: str
+    source_cell: int
+    clear_number_label: bool = False
+
+
+@dataclass(frozen=True)
 class Sheet:
     source: str
     slug: str
@@ -64,6 +79,8 @@ class Sheet:
     crop_top_px: int | None = None
     frame_padding_px: int = 0
     clear_bright_edges: bool = False
+    halo_peel_passes: int = HALO_PEEL_PASSES
+    frame_overrides: tuple[FrameOverride, ...] = ()
 
 
 SHEETS = [
@@ -81,8 +98,28 @@ SHEETS = [
         clear_bright_edges=True,
     ),
     Sheet("img_stable_3.png", "adjust-glasses-cool"),
-    Sheet("img_stable_4.png", "love-brain"),
-    Sheet("img_stable_5.png", "late-backpack-run", clear_number_label=True),
+    Sheet(
+        "img_stable_4.png",
+        "love-brain",
+        # The last five poses continue the story with the girl from Extra:
+        # source cells 12-16 are row 3 / column 4, then all of row 4.
+        halo_peel_passes=5,
+        frame_overrides=(
+            FrameOverride(12, "img_stable_4_extra.png", 12, clear_number_label=True),
+            FrameOverride(13, "img_stable_4_extra.png", 13, clear_number_label=True),
+            FrameOverride(14, "img_stable_4_extra.png", 14, clear_number_label=True),
+            FrameOverride(15, "img_stable_4_extra.png", 15),
+            FrameOverride(16, "img_stable_4_extra.png", 16),
+        ),
+    ),
+    # White trousers have exposed outer edges, so use the gentler halo cleanup
+    # that preserves the fabric while still removing the cell background.
+    Sheet(
+        "img_stable_5.png",
+        "late-backpack-run",
+        clear_number_label=True,
+        halo_peel_passes=5,
+    ),
 ]
 
 
@@ -203,7 +240,7 @@ def is_white_halo_pixel(pixel: tuple[int, int, int, int]) -> bool:
     )
 
 
-def clear_perimeter_halo(frame: Image.Image) -> Image.Image:
+def clear_perimeter_halo(frame: Image.Image, passes: int = HALO_PEEL_PASSES) -> Image.Image:
     """Peel a thin bright fringe that hugs the line art, edge inward only.
 
     Only clears bright low-saturation pixels that touch transparency, so whites
@@ -212,7 +249,7 @@ def clear_perimeter_halo(frame: Image.Image) -> Image.Image:
     rgba = frame.convert("RGBA")
     width, height = rgba.size
 
-    for _ in range(HALO_PEEL_PASSES):
+    for _ in range(passes):
         pixels = rgba.load()
         to_clear: list[tuple[int, int]] = []
         for y in range(1, height - 1):
@@ -240,7 +277,7 @@ def clear_perimeter_halo(frame: Image.Image) -> Image.Image:
 
 
 def clear_top_left_label(frame: Image.Image) -> None:
-    """Remove the black frame numbers present only on the walk/run sheet."""
+    """Remove a source-frame number drawn in the top-left corner."""
     pixels = frame.load()
     for y in range(0, 58):
         for x in range(0, 64):
@@ -425,12 +462,46 @@ def add_frame_padding(frame: Image.Image, padding: int) -> Image.Image:
     return padded
 
 
-def split_sheet(sheet: Sheet) -> int:
-    source = RAW_DIR / sheet.source
-    image = Image.open(source).convert("RGB")
+def crop_grid_cell(image: Image.Image, sheet: Sheet, cell_number: int) -> Image.Image:
+    """Crop one 1-based cell from a 4x4 source sheet with its sheet settings."""
+    if not 1 <= cell_number <= GRID * GRID:
+        raise ValueError(f"Cell {cell_number} is outside the {GRID}x{GRID} grid")
+
     width, height = image.size
     xs = [round(i * width / GRID) for i in range(GRID + 1)]
     ys = [round(i * height / GRID) for i in range(GRID + 1)]
+    row, col = divmod(cell_number - 1, GRID)
+    inset = sheet.crop_inset_px
+    top_inset = inset if sheet.crop_top_px is None else sheet.crop_top_px
+    cell = image.crop((xs[col] + inset, ys[row] + top_inset, xs[col + 1] - inset, ys[row + 1] - inset))
+    return cell.resize((CANVAS, CANVAS), Image.LANCZOS)
+
+
+def clean_cell(cell: Image.Image, sheet: Sheet, clear_number_label: bool = False) -> Image.Image:
+    """Remove the panel background and source labels from one resized grid cell."""
+    frame = remove_background(cell, sheet.barrier_expand)
+    if sheet.clear_number_label or clear_number_label:
+        clear_top_left_label(frame)
+    clear_top_edge_artifacts(frame)
+    frame = clear_perimeter_halo(frame, sheet.halo_peel_passes)
+    clear_top_edge_artifacts(frame)
+    clear_top_card_edge(frame)
+    if sheet.clear_bright_edges:
+        frame = clear_bright_edge_artifacts(frame)
+        clear_top_edge_artifacts(frame)
+        clear_top_card_edge(frame)
+    frame = remove_small_islands(frame)
+    return add_frame_padding(frame, sheet.frame_padding_px)
+
+
+def split_sheet(sheet: Sheet) -> int:
+    source_images = {
+        sheet.source: Image.open(RAW_DIR / sheet.source).convert("RGB"),
+    }
+    overrides = {override.target_frame: override for override in sheet.frame_overrides}
+    for override in sheet.frame_overrides:
+        if override.source not in source_images:
+            source_images[override.source] = Image.open(RAW_DIR / override.source).convert("RGB")
 
     out_dir = FRAME_OUT_ROOT / sheet.slug
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -443,27 +514,14 @@ def split_sheet(sheet: Sheet) -> int:
             old_asset.unlink()
 
     count = 0
-    for row in range(GRID):
-        for col in range(GRID):
-            inset = sheet.crop_inset_px
-            top_inset = inset if sheet.crop_top_px is None else sheet.crop_top_px
-            cell = image.crop((xs[col] + inset, ys[row] + top_inset, xs[col + 1] - inset, ys[row + 1] - inset))
-            cell = cell.resize((CANVAS, CANVAS), Image.LANCZOS)
-            frame = remove_background(cell, sheet.barrier_expand)
-            if sheet.clear_number_label:
-                clear_top_left_label(frame)
-            clear_top_edge_artifacts(frame)
-            frame = clear_perimeter_halo(frame)
-            clear_top_edge_artifacts(frame)
-            clear_top_card_edge(frame)
-            if sheet.clear_bright_edges:
-                frame = clear_bright_edge_artifacts(frame)
-                clear_top_edge_artifacts(frame)
-                clear_top_card_edge(frame)
-            frame = remove_small_islands(frame)
-            frame = add_frame_padding(frame, sheet.frame_padding_px)
-            count += 1
-            frame.save(out_dir / f"frame_{count:02d}.png")
+    for frame_number in range(1, GRID * GRID + 1):
+        override = overrides.get(frame_number)
+        source_name = override.source if override else sheet.source
+        source_cell = override.source_cell if override else frame_number
+        cell = crop_grid_cell(source_images[source_name], sheet, source_cell)
+        frame = clean_cell(cell, sheet, override.clear_number_label if override else False)
+        count += 1
+        frame.save(out_dir / f"frame_{count:02d}.png")
 
     print(f"{sheet.slug}: {count} clean PNG frames", flush=True)
     return count

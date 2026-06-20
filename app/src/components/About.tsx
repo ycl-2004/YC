@@ -20,7 +20,7 @@ const FRAME_COUNT = 16
 // (matches the .ward-frame grow transition in styles.css).
 const ENLARGE_MS = 300
 const MOBILE_HOLD_MS = 650
-const CLIP_ASSET_VERSION = 'frames-16-clean-v8'
+const CLIP_ASSET_VERSION = 'frames-16-clean-v10'
 const WARDROBE_PLAY_EVENT = 'wardrobe-play'
 
 const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}`
@@ -28,8 +28,8 @@ const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}
 const wardrobeClips = [
   {
     slug: 'tidy-clothes',
-    label: '装酷',
-    alt: 'YC 整理黑色外套，摆出装酷的姿态',
+    label: '酷酷的',
+    alt: 'YC 整理黑色外套，摆出酷酷的姿态',
     frameMs: 110,
   },
   {
