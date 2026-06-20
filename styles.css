@@ -77,10 +77,31 @@ section{position:relative;}
 .navlinks a:hover::after,.navlinks a.active::after{transform:scaleX(1);}
 .nav-cta{padding:8px 17px; border-radius:999px; background:var(--ink); color:#fff; font-size:.88rem; font-weight:600;}
 .nav-cta:hover{background:var(--wine);}
-.nav-toggle{display:none;}
+.nav-toggle{display:none; flex-direction:column; justify-content:center; gap:5px;
+  width:42px; height:42px; padding:0; border:0; background:transparent; cursor:pointer; border-radius:10px;}
+.nav-toggle span{display:block; width:22px; height:2px; border-radius:2px; background:var(--ink);
+  transition:transform .3s cubic-bezier(.16,1,.3,1),opacity .2s; margin:0 auto;}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0;}
+.nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 @media(max-width:860px){
-  .navlinks{display:none;}
+  .nav-toggle{display:flex;}
+  .navlinks{position:absolute; top:calc(100% + 2px); left:0; right:0;
+    flex-direction:column; align-items:stretch; gap:0;
+    background:rgba(254,252,246,.97); backdrop-filter:blur(14px) saturate(1.1);
+    padding:6px 14px 14px; box-shadow:0 14px 28px rgba(26,26,46,.12); border-radius:0 0 16px 16px;
+    transform:translateY(-10px); opacity:0; visibility:hidden; pointer-events:none;
+    transition:transform .26s cubic-bezier(.16,1,.3,1),opacity .26s,visibility .26s;}
+  .navlinks.open{transform:translateY(0); opacity:1; visibility:visible; pointer-events:auto;}
+  .navlinks a{padding:13px 10px; font-size:1.02rem; border-radius:10px;}
+  .navlinks a:not(:last-child){border-bottom:1px solid rgba(26,26,46,.07);}
+  .navlinks a::after{display:none;}
   .nav-cta{padding:7px 15px; font-size:.84rem;}
+}
+@media(max-width:560px){
+  .brand .tag{display:none;}
+  .nav{padding:14px 16px;}
+  .nav-cta{padding:7px 13px; font-size:.8rem;}
 }
 
 /* ============ buttons ============ */
@@ -437,6 +458,7 @@ footer .totop:hover{opacity:1;}
   .value-grid{grid-template-columns:repeat(3,1fr);}
   .floatsticker{opacity:.5;}
   .values-float{width:108px; opacity:.55;}
+  .scrollcue{display:none;}            /* overlaps stats once the hero stacks */
 }
 @media(max-width:600px){
   body{font-size:15px;}
@@ -453,8 +475,9 @@ footer .totop:hover{opacity:1;}
   .floatsticker{display:none;}
   .values-float{display:none;}
   .cta-figure{display:none;}
-  .fig-badge.b2{right:-4%;}
-  .fig-note{right:0;}
+  .figure-stage{width:min(300px,76vw);}
+  .fig-badge{display:none;}            /* negative offsets clip off-screen on phones */
+  .fig-note{right:0; bottom:-4%;}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important; scroll-behavior:auto!important;}
@@ -533,4 +556,74 @@ footer .totop:hover{opacity:1;}
   .name-shine{-webkit-text-fill-color:var(--wine); color:var(--wine);}
   .fig-beam,.shimmer::after,.meteors{display:none;}
   .text-reveal .word{opacity:1; filter:none; transform:none;}
+}
+
+/* ============================================================
+   image idle motion + inline SVG animations (yc-design)
+   - chibi 角色只做漂浮/呼吸，不 rotate（品牌规则：贴纸正放）
+   - idle 用独立 translate 属性，绝不抢占 hover 的 transform
+   - 全部受顶部 prefers-reduced-motion 的 *{animation:none} 管控
+   ============================================================ */
+
+/* gentle idle float on character images */
+.pillar-img,.cta-avatar,.ward-rail img,.values-float{animation:imgFloat 6s ease-in-out infinite;}
+@keyframes imgFloat{0%,100%{translate:0 0;}50%{translate:0 -7px;}}
+/* stagger so they never bob in lockstep */
+.pillar:nth-child(2) .pillar-img{animation-duration:6.6s; animation-delay:-1.2s;}
+.pillar:nth-child(3) .pillar-img{animation-duration:5.4s; animation-delay:-.6s;}
+.pillar:nth-child(4) .pillar-img{animation-duration:7s; animation-delay:-2.1s;}
+.pillar:nth-child(5) .pillar-img{animation-duration:6.2s; animation-delay:-.9s;}
+.ward-rail img:nth-child(2){animation-delay:-1s;}
+.ward-rail img:nth-child(3){animation-delay:-2s;}
+.ward-rail img:nth-child(4){animation-delay:-3s;}
+.ward-rail img:nth-child(5){animation-delay:-4s;}
+.cta-avatar{animation-duration:5s;}
+.values-float{animation-duration:8s;}
+
+/* click-to-hop: character springs up with a little squash-stretch when clicked.
+   Hop uses `transform` (idle float keeps using `translate`, so they compose).
+   .hop overrides the idle `animation` only while the hop plays, then it resumes. */
+.pillar-img,.cta-avatar,.ward-rail img,.values-float{cursor:pointer;}
+.pillar-img.hop,.cta-avatar.hop,.ward-rail img.hop,.values-float.hop{
+  animation:hop .7s cubic-bezier(.22,1,.36,1);}
+@keyframes hop{
+  0%{transform:translateY(0) scale(1,1);}
+  22%{transform:translateY(-26px) scale(1.08,.92);}
+  45%{transform:translateY(-2px) scale(.96,1.04);}
+  62%{transform:translateY(-12px) scale(1.02,.98);}
+  80%{transform:translateY(0) scale(.99,1.01);}
+  100%{transform:translateY(0) scale(1,1);}}
+
+/* drifting hearts near the finale CTA (blush/wine = emotion, 点睛 only) */
+.cta-hearts{position:absolute; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+.cta-hearts svg{position:absolute; bottom:16%; width:18px; height:18px; fill:var(--blush); opacity:0; animation:heartdrift 6.5s ease-in infinite;}
+.cta-hearts svg:nth-child(1){left:30%; animation-delay:0s;}
+.cta-hearts svg:nth-child(2){left:50%; animation-delay:2.1s; width:14px; fill:var(--wine);}
+.cta-hearts svg:nth-child(3){left:67%; animation-delay:4.2s; width:22px;}
+@keyframes heartdrift{0%{opacity:0; transform:translateY(0) scale(.6);}14%{opacity:.75;}100%{opacity:0; transform:translateY(-170px) scale(1);}}
+
+/* twinkling spark — real inline SVG (creativity / idea; 火花是装饰，可轻微旋转) */
+.spark{position:absolute; z-index:2; pointer-events:none; width:20px; height:20px; fill:var(--blush);}
+.spark.s1{top:16px; right:16px; animation:twinkle 2.4s ease-in-out infinite;}
+.spark.s2{top:42px; right:42px; width:13px; fill:var(--denim); animation:twinkle 2.4s ease-in-out infinite .9s;}
+@keyframes twinkle{0%,100%{opacity:.25; transform:scale(.65) rotate(0deg);}50%{opacity:1; transform:scale(1.1) rotate(45deg);}}
+
+/* ============ very small phones (≤420px) ============ */
+@media(max-width:420px){
+  body{font-size:14.5px;}
+  .container{padding:0 1rem;}
+  .hero{padding:6rem 1rem 3.5rem;}
+  .hero-stats{flex-wrap:wrap; gap:14px 22px;}
+  .hero-stats .st{min-width:40%;}
+  .mq-track span{font-size:.92rem; padding:0 1.1rem; gap:1.1rem;}
+  .mq-track span::after{font-size:.6em;}
+  .scene-card{width:78vw; max-width:300px;}
+  .pillar{padding:20px;}
+  .pillar-img{width:104px;}
+  .value-grid{gap:10px;}
+  .btn{padding:13px 22px; font-size:.94rem;}
+}
+/* keep very wide screens from over-stretching line lengths */
+@media(min-width:1500px){
+  .hero{padding-left:0; padding-right:0;}
 }

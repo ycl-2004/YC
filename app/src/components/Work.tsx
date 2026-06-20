@@ -32,6 +32,12 @@ export default function Work() {
           </div>
           <div className="pillar reveal reveal-d2">
             <span className="pillar-bgnum">2</span>
+            <svg className="spark s1" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" />
+            </svg>
+            <svg className="spark s2" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" />
+            </svg>
             <span className="emoji">💡</span>
             <span className="en">Design &amp; Ideas</span>
             <h3>记录灵感，规划未来</h3>

@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Caveat:wght@400;600;700&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 
@@ -28,6 +28,9 @@
     <a href="#values">价值观</a>
   </div>
   <a href="#find" class="nav-cta" data-magnetic>找到我 →</a>
+  <button type="button" class="nav-toggle" id="navToggle" aria-label="打开菜单" aria-expanded="false" aria-controls="navlinks">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <span id="top"></span>
@@ -143,6 +146,8 @@
       </div>
       <div class="pillar reveal reveal-d2">
         <span class="pillar-bgnum">2</span>
+        <svg class="spark s1" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z"/></svg>
+        <svg class="spark s2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z"/></svg>
         <span class="emoji">💡</span>
         <span class="en">Design &amp; Ideas</span>
         <h3>记录灵感，规划未来</h3>
@@ -234,6 +239,11 @@
 <!-- ===== CTA / FIND ME ===== -->
 <section class="cta pad" id="find">
   <span class="cta-bgword" aria-hidden="true">say hi</span>
+  <div class="cta-hearts" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.6-9C.8 8.9 2.4 5.5 6 5.5c2 0 3.3 1.2 4 2.4.7-1.2 2-2.4 4-2.4 3.6 0 5.2 3.4 3.6 6.5C19 16.6 12 21 12 21Z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.6-9C.8 8.9 2.4 5.5 6 5.5c2 0 3.3 1.2 4 2.4.7-1.2 2-2.4 4-2.4 3.6 0 5.2 3.4 3.6 6.5C19 16.6 12 21 12 21Z"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.6-9C.8 8.9 2.4 5.5 6 5.5c2 0 3.3 1.2 4 2.4.7-1.2 2-2.4 4-2.4 3.6 0 5.2 3.4 3.6 6.5C19 16.6 12 21 12 21Z"/></svg>
+  </div>
   <div class="container cta-inner">
     <img class="cta-avatar reveal" src="assets/stickers/pose-standing.png" alt="YC · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象">
     <h2 class="serif reveal">一起<em>创作</em>点什么吧</h2>
@@ -317,6 +327,6 @@
 </footer>
 
 <script src="assets/html2canvas.min.js"></script>
-<script src="script.js?v=6"></script>
+<script src="script.js?v=10"></script>
 </body>
 </html>

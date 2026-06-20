@@ -456,4 +456,32 @@ export function initEffects(): void {
   }
   const finaleBtn = document.getElementById('shareProfile')
   if (finaleBtn) finaleBtn.addEventListener('click', (e) => burstHearts(e.clientX, e.clientY))
+
+  /* ---- click a character → springy hop ---- */
+  document.querySelectorAll<HTMLElement>('.pillar-img,.cta-avatar,.ward-rail img,.values-float').forEach((img) => {
+    img.addEventListener('click', () => {
+      img.classList.remove('hop')
+      void img.offsetWidth // reflow so the class re-applies
+      img.classList.add('hop')
+    })
+    img.addEventListener('animationend', (e) => {
+      if (e.animationName === 'hop') img.classList.remove('hop')
+    })
+  })
+
+  /* ---- mobile nav menu (hamburger) ---- */
+  const navToggle = document.getElementById('navToggle')
+  const navLinks = document.getElementById('navlinks')
+  if (navToggle && navLinks) {
+    const setMenu = (open: boolean) => {
+      navLinks.classList.toggle('open', open)
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+      navToggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单')
+    }
+    navToggle.addEventListener('click', () => setMenu(!navLinks.classList.contains('open')))
+    navLinks.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)))
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setMenu(false)
+    })
+  }
 }

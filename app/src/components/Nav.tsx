@@ -14,6 +14,18 @@ export default function Nav() {
       <a href="#find" className="nav-cta" data-magnetic>
         找到我 →
       </a>
+      <button
+        type="button"
+        className="nav-toggle"
+        id="navToggle"
+        aria-label="打开菜单"
+        aria-expanded="false"
+        aria-controls="navlinks"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </nav>
   )
 }

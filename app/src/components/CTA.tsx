@@ -15,6 +15,13 @@ export default function CTA() {
       <span className="cta-bgword" aria-hidden="true">
         say hi
       </span>
+      <div className="cta-hearts" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <svg key={i} viewBox="0 0 24 24">
+            <path d="M12 21s-7-4.4-9.6-9C.8 8.9 2.4 5.5 6 5.5c2 0 3.3 1.2 4 2.4.7-1.2 2-2.4 4-2.4 3.6 0 5.2 3.4 3.6 6.5C19 16.6 12 21 12 21Z" />
+          </svg>
+        ))}
+      </div>
       <div className="container cta-inner">
         <img
           className="cta-avatar reveal"

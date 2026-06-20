@@ -226,4 +226,27 @@
   }
   var finaleBtn=document.getElementById('shareProfile');
   if(finaleBtn){ finaleBtn.addEventListener('click', function(e){ burstHearts(e.clientX,e.clientY); }); }
+
+  /* ---- click a character → springy hop ---- */
+  document.querySelectorAll('.pillar-img,.cta-avatar,.ward-rail img,.values-float').forEach(function(img){
+    img.addEventListener('click',function(){
+      img.classList.remove('hop');           // restart if mid-animation
+      void img.offsetWidth;                   // reflow so the class re-applies
+      img.classList.add('hop');
+    });
+    img.addEventListener('animationend',function(e){ if(e.animationName==='hop') img.classList.remove('hop'); });
+  });
+
+  /* ---- mobile nav menu (hamburger) ---- */
+  var navToggle=document.getElementById('navToggle'), navLinks=document.getElementById('navlinks');
+  if(navToggle && navLinks){
+    function setMenu(open){
+      navLinks.classList.toggle('open',open);
+      navToggle.setAttribute('aria-expanded',open?'true':'false');
+      navToggle.setAttribute('aria-label',open?'关闭菜单':'打开菜单');
+    }
+    navToggle.addEventListener('click',function(){ setMenu(!navLinks.classList.contains('open')); });
+    navLinks.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ setMenu(false); }); });
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') setMenu(false); });
+  }
 })();
