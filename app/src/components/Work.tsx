@@ -24,7 +24,6 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
           alt={alt}
           loading="eager"
           decoding="async"
-          fetchPriority="high"
           style={{ opacity: animationReady ? 0 : undefined }}
         />
         {!prefersReducedMotion && !animationFailed && (
@@ -35,7 +34,6 @@ function MotionPortrait({ variant, animatedSrc, staticSrc, alt }: MotionPortrait
             aria-hidden="true"
             loading="eager"
             decoding="async"
-            fetchPriority="low"
             style={{ opacity: animationReady ? 0.98 : 0 }}
             onLoad={() => setAnimationReady(true)}
             onError={() => setAnimationFailed(true)}
@@ -51,23 +49,34 @@ export default function Work() {
     <section className="pad" id="work">
       <div className="container">
         <div className="pillars-head reveal">
-          <span className="sec-num">02</span>
-          <h2 className="sec-title serif">我在创作什么</h2>
+          <span className="sec-num">03</span>
+          <h2 className="sec-title serif">我主要分享什么</h2>
           <p className="sec-sub">
-            五个方向，一个 YC。<span className="deco">One IP, Many Possibilities.</span>
+            五个内容栏目，一种做事方式：<span className="deco">Romantic Engineering.</span>
+          </p>
+          <p className="universe-line" aria-label="YC 的内容世界">
+            <span>AI Lab</span>
+            <i>·</i>
+            <span>Design Room</span>
+            <i>·</i>
+            <span>Music Corner</span>
+            <i>·</i>
+            <span>Book Shelf</span>
+            <i>·</i>
+            <span>Life Diary</span>
           </p>
         </div>
         <div className="pillar-grid">
           <div className="pillar reveal reveal-d1">
             <span className="pillar-bgnum">1</span>
             <span className="emoji">⌨️</span>
-            <span className="en">AI &amp; Coding</span>
-            <h3>思考 · 构建 · 解决</h3>
+            <span className="en">AI Creator Life</span>
+            <h3>让 AI 变成创作系统</h3>
             <div className="kw">
               <span>AI Tools</span>
+              <span>Agents</span>
               <span>Automation</span>
-              <span>No-code</span>
-              <span>Web Dev</span>
+              <span>Build Log</span>
             </div>
             <MotionPortrait
               variant="ai"
@@ -85,12 +94,13 @@ export default function Work() {
               <path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" />
             </svg>
             <span className="emoji">💡</span>
-            <span className="en">Design &amp; Ideas</span>
-            <h3>记录灵感，规划未来</h3>
+            <span className="en">Design My Own IP</span>
+            <h3>把想法做成我的表达</h3>
             <div className="kw">
               <span>Visual Design</span>
-              <span>Brand</span>
-              <span>Content</span>
+              <span>Personal Brand</span>
+              <span>Web</span>
+              <span>Covers</span>
             </div>
             <MotionPortrait
               variant="design"
@@ -102,11 +112,11 @@ export default function Work() {
           <div className="pillar reveal reveal-d3">
             <span className="pillar-bgnum">3</span>
             <span className="emoji">♪</span>
-            <span className="en">Music &amp; Creativity</span>
-            <h3>用音乐表达情绪</h3>
+            <span className="en">Music &amp; Mood</span>
+            <h3>用旋律记录情绪</h3>
             <div className="kw">
-              <span>Beat Making</span>
-              <span>Keys</span>
+              <span>Guitar</span>
+              <span>Melody</span>
               <span>Mood</span>
             </div>
             <MotionPortrait
@@ -125,26 +135,26 @@ export default function Work() {
             />
             <div className="p-body">
               <span className="emoji">📚</span>
-              <span className="en">Learning &amp; Books</span>
-              <h3>保持好奇，持续升级</h3>
+              <span className="en">Books / Mind / Growth</span>
+              <h3>读书、思考，慢慢长成自己</h3>
               <div className="kw">
-                <span>Mindset</span>
-                <span>Business</span>
+                <span>Books</span>
+                <span>Mind</span>
                 <span>Psychology</span>
-                <span>Growth</span>
-                <span>Keep Learning</span>
+                <span>Long-term Growth</span>
               </div>
             </div>
           </div>
           <div className="pillar reveal reveal-d2">
             <span className="pillar-bgnum">5</span>
             <span className="emoji">🌿</span>
-            <span className="en">Lifestyle &amp; Outdoor</span>
-            <h3>享受生活，保持热爱</h3>
+            <span className="en">Soft Life Diary</span>
+            <h3>把日常过成作品</h3>
             <div className="kw">
+              <span>Coffee</span>
               <span>City Walks</span>
-              <span>Nature</span>
-              <span>Slow Living</span>
+              <span>Travel</span>
+              <span>Soft Life</span>
             </div>
             <MotionPortrait
               variant="photo"

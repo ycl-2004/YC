@@ -9,7 +9,7 @@ export default function Scenes() {
       <div className="container">
         <div className="scenes-head reveal">
           <div>
-            <span className="sec-num">03</span>
+            <span className="sec-num">04</span>
             <h2 className="sec-title serif">我的日常切片</h2>
           </div>
           <p className="sec-sub" style={{ margin: 0 }}>

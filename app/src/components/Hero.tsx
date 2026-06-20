@@ -28,14 +28,18 @@ export default function Hero() {
         </p>
         <p className="hero-intro">
           一个在 AI 时代<b>认真生活、浪漫创作</b>
-          的人。写代码、做设计、写音乐、读书、到处走走——把混乱的想法，变成有价值、有温度的东西。
+          的人。用 AI、设计、音乐和文字，把生活变成有价值、有温度的作品。
+        </p>
+        <p className="hero-start">
+          <span>第一次认识 YC？</span>
+          我分享 AI 工具、创作系统、个人 IP、音乐灵感，和认真生活的切片。
         </p>
         <div className="hero-actions">
-          <a href="#work" className="btn btn-primary shimmer" data-magnetic>
-            看我在创作什么 <span className="ar">↓</span>
+          <a href="#now" className="btn btn-primary shimmer" data-magnetic>
+            看看最近的 YC <span className="ar">↓</span>
           </a>
           <a href="#find" className="btn btn-ghost" data-magnetic>
-            找到我 <span className="ar">→</span>
+            关注 YC <span className="ar">→</span>
           </a>
         </div>
           <div className="hero-stats">

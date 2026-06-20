@@ -226,7 +226,7 @@ export function initEffects(): void {
   /* ---- nav scrolled + scroll progress + active link + parallax ---- */
   const nav = document.getElementById('nav')
   const progress = document.getElementById('progress')
-  const sections = ['about', 'work', 'scenes', 'values'].map((id) => document.getElementById(id))
+  const sections = ['about', 'now', 'work', 'scenes', 'values'].map((id) => document.getElementById(id))
   const navAnchors: Record<string, HTMLElement> = {}
   document.querySelectorAll('.navlinks a').forEach((a) => {
     navAnchors[(a.getAttribute('href') || '').slice(1)] = a as HTMLElement
@@ -299,19 +299,6 @@ export function initEffects(): void {
     })
   }
 
-  /* ---- platform links: gentle hint if still placeholder ---- */
-  document.querySelectorAll<HTMLAnchorElement>('.platforms a').forEach((a) => {
-    a.addEventListener('click', (ev) => {
-      if (a.getAttribute('href') === '#') {
-        ev.preventDefault()
-        const s = document.getElementById('shareStatus')
-        if (s)
-          s.textContent =
-            a.getAttribute('data-edit') + ' 链接还没填，可在组件里把 href="#" 换成你的主页地址'
-      }
-    })
-  })
-
   /* ---- name card modal ---- */
   const modal = document.getElementById('cardModal')
   const opener = document.getElementById('shareProfile')
@@ -349,6 +336,23 @@ export function initEffects(): void {
         }, 1800)
       } catch {
         setStatus('请手动复制地址栏链接')
+      }
+    })
+
+  const copyWechat = document.getElementById('copyWechat') as HTMLButtonElement | null
+  if (copyWechat)
+    copyWechat.addEventListener('click', async () => {
+      const wechatId = copyWechat.getAttribute('data-wechat-id')
+      if (!wechatId) return
+      try {
+        await navigator.clipboard.writeText(wechatId)
+        copyWechat.textContent = '已复制 ✓'
+        setStatus('微信号已复制')
+        setTimeout(() => {
+          copyWechat.textContent = '复制 ' + wechatId
+        }, 1800)
+      } catch {
+        setStatus('请手动复制微信号：' + wechatId)
       }
     })
   const dlBtn = document.getElementById('dlCard')

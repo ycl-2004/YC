@@ -23,7 +23,7 @@ export default function Values() {
       />
       <div className="container">
         <div className="values-head reveal">
-          <span className="sec-num">04</span>
+          <span className="sec-num">05</span>
           <h2 className="sec-title serif">我看重什么</h2>
           <span className="en">What I value</span>
         </div>

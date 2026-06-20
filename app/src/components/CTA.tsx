@@ -1,12 +1,21 @@
 import { asset } from '../lib/asset'
 
-const platforms: [string, string][] = [
-  ['小红书', '小红书'],
-  ['B站', 'B 站'],
-  ['YouTube', 'YouTube'],
-  ['Instagram', 'Instagram'],
-  ['Twitter/X', 'Twitter / X'],
-  ['LinkedIn', 'LinkedIn'],
+const platforms = [
+  {
+    number: '01',
+    label: '小红书',
+    description: 'AI 工具、个人系统、创作记录',
+    href: 'https://xhslink.com/m/AjbMXadUQu2',
+  },
+  {
+    number: '02',
+    label: 'Instagram',
+    description: '视觉日记、音乐、城市漫步',
+    href: 'https://www.instagram.com/linyc_04?igsh=bW0wbG84aWk4dmow&utm_source=qr',
+  },
+  { number: '03', label: '微信', description: '更近一点的近况与交流', wechatId: 'y1chnlyn' },
+  { number: '04', label: 'LinkedIn', description: '项目、职业思考、成长记录' },
+  { number: '05', label: '抖音', description: 'AI 实测、创作过程、日常短片' },
 ]
 
 export default function CTA() {
@@ -29,17 +38,40 @@ export default function CTA() {
           alt="YC · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象"
         />
         <h2 className="serif reveal">
-          一起<em>创作</em>点什么吧
+          在不同的地方，看到不同的 <em>YC</em>
         </h2>
-        <p className="lead reveal reveal-d1">在这些地方，你能找到正在 build &amp; share 的我 ↓</p>
-        <div className="platforms reveal reveal-d2">
-          {platforms.map(([edit, label]) => (
-            <a href="#" data-magnetic data-edit={edit} key={edit}>
-              <span className="dot"></span>
-              {label}
-            </a>
+        <p className="lead reveal reveal-d1">同一个人，五种更合适的相遇方式。</p>
+        <ol className="social-map reveal reveal-d2" aria-label="YC 的社交媒体内容地图">
+          {platforms.map((platform) => (
+            <li key={platform.label}>
+              <span className="social-num" aria-hidden="true">
+                {platform.number}
+              </span>
+              <strong>
+                {platform.href ? (
+                  <a href={platform.href} target="_blank" rel="noreferrer" data-magnetic>
+                    {platform.label} <span aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  platform.label
+                )}
+              </strong>
+              <span>
+                {platform.description}
+                {platform.wechatId && (
+                  <button type="button" className="wechat-copy" id="copyWechat" data-wechat-id={platform.wechatId}>
+                    复制 {platform.wechatId}
+                  </button>
+                )}
+              </span>
+            </li>
           ))}
-        </div>
+        </ol>
+        <aside className="collab-note reveal reveal-d3" aria-label="合作方向">
+          <span className="deco">Work with YC</span>
+          <p>AI 与创作者工具 · 学习与效率工具 · 设计、音乐与生活方式内容</p>
+          <small>图文分享 · 短视频 · 产品体验 · 教学内容 · build log</small>
+        </aside>
         <button type="button" className="btn-finale shimmer reveal reveal-d3" id="shareProfile" data-magnetic>
           分享这张 YC 名片 <span className="ar">→</span>
         </button>

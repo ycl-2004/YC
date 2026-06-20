@@ -7,12 +7,13 @@ export default function Nav() {
       </a>
       <div className="navlinks" id="navlinks">
         <a href="#about">关于</a>
+        <a href="#now">最近</a>
         <a href="#work">创作</a>
         <a href="#scenes">日常</a>
         <a href="#values">价值观</a>
       </div>
       <a href="#find" className="nav-cta" data-magnetic>
-        找到我 →
+        关注 YC →
       </a>
       <button
         type="button"

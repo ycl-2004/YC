@@ -4,6 +4,7 @@ import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Marquee from './components/Marquee'
 import About from './components/About'
+import Now from './components/Now'
 import Work from './components/Work'
 import Scenes from './components/Scenes'
 import Values from './components/Values'
@@ -32,6 +33,7 @@ export default function App() {
       <Hero />
       <Marquee />
       <About />
+      <Now />
       <Work />
       <Scenes />
       <Values />
