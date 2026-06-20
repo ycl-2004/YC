@@ -349,7 +349,7 @@ section{position:relative;}
   border:1px solid rgba(26,26,46,.06); background:var(--paper); cursor:pointer; overflow:visible;
   transition:transform .26s cubic-bezier(.16,1,.3,1),box-shadow .26s,background .26s,border-color .26s;
   font:inherit; color:inherit; -webkit-tap-highlight-color:transparent;}
-.ward-clip:hover,.ward-clip:focus-visible{z-index:9; transform:translateY(-6px); box-shadow:0 22px 44px rgba(26,26,46,.18); background:#fff; border-color:rgba(178,58,72,.18);}
+.ward-clip:hover,.ward-clip:focus-visible,.ward-clip.is-playing{z-index:9; transform:translateY(-6px); box-shadow:0 22px 44px rgba(26,26,46,.18); background:#fff; border-color:rgba(178,58,72,.18);}
 .ward-clip:focus-visible{outline:2px solid var(--denim); outline-offset:3px;}
 .ward-frame-stage{position:relative; display:block; width:100%; height:100%;}
 .ward-frame{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none;
@@ -357,12 +357,27 @@ section{position:relative;}
   transition:transform .3s cubic-bezier(.34,1.4,.5,1),filter .3s;}
 .ward-frame-current{z-index:1;}
 /* pop out of the card to ~3x (not full screen). Tune the scale here. */
-.ward-clip:hover .ward-frame-current,.ward-clip:focus-visible .ward-frame-current{
+.ward-clip:hover .ward-frame-current,.ward-clip:focus-visible .ward-frame-current,.ward-clip.is-playing .ward-frame-current{
   transform:scale(var(--ward-hover-scale)); filter:drop-shadow(0 22px 30px rgba(26,26,46,.26));}
 .ward-caption{position:absolute; left:50%; bottom:-.9rem; z-index:3; transform:translate(-50%,0); opacity:.34; pointer-events:none;
   color:var(--ink-faint); font-size:.68rem; font-weight:500; letter-spacing:.04em; line-height:1; white-space:nowrap;
   text-shadow:0 1px 0 rgba(255,253,248,.9); transition:opacity .2s ease,transform .2s ease,color .2s ease;}
-.ward-clip:hover .ward-caption,.ward-clip:focus-visible .ward-caption{opacity:.68; color:var(--ink-muted); transform:translate(-50%,-1px);}
+.ward-clip:hover .ward-caption,.ward-clip:focus-visible .ward-caption,.ward-clip.is-playing .ward-caption{opacity:.68; color:var(--ink-muted); transform:translate(-50%,-1px);}
+
+@media(hover:none),(pointer:coarse){
+  .ward-clip{--ward-hover-scale:2.35;}
+  .ward-clip:hover{z-index:1; transform:none; box-shadow:none; background:var(--paper); border-color:rgba(26,26,46,.06);}
+  .ward-clip:hover .ward-frame-current{transform:scale(var(--ward-thumb-scale)); filter:drop-shadow(0 8px 10px rgba(26,26,46,.08));}
+  .ward-clip:hover .ward-caption{opacity:.34; color:var(--ink-faint); transform:translate(-50%,0);}
+  .ward-clip.is-playing{z-index:9; transform:translateY(-4px); box-shadow:0 22px 44px rgba(26,26,46,.18); background:#fff; border-color:rgba(178,58,72,.18);}
+  .ward-clip.is-playing .ward-frame-current{transform:scale(var(--ward-hover-scale)); filter:drop-shadow(0 22px 30px rgba(26,26,46,.26));}
+  .ward-clip.is-playing .ward-caption{opacity:.68; color:var(--ink-muted); transform:translate(-50%,-1px);}
+  .ward-clip:nth-child(1) .ward-frame{transform-origin:12% 76%;}
+  .ward-clip:nth-child(2) .ward-frame{transform-origin:50% 76%;}
+  .ward-clip:nth-child(3) .ward-frame{transform-origin:88% 76%;}
+  .ward-clip:nth-child(4) .ward-frame{transform-origin:32% 76%;}
+  .ward-clip:nth-child(5) .ward-frame{transform-origin:68% 76%;}
+}
 
 /* ============ now / currently happening ============ */
 .now{padding:0 0 clamp(52px,8vw,96px); background:var(--cream-deep);}

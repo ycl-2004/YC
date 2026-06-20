@@ -19,7 +19,9 @@ const FRAME_COUNT = 16
 // Hover scales the card up first, then playback starts once it has grown
 // (matches the .ward-frame grow transition in styles.css).
 const ENLARGE_MS = 300
+const MOBILE_HOLD_MS = 650
 const CLIP_ASSET_VERSION = 'frames-16-clean-v7'
+const WARDROBE_PLAY_EVENT = 'wardrobe-play'
 
 const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}`
 
@@ -77,9 +79,12 @@ function usePrefersReducedMotion() {
 function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
   const prefersReducedMotion = usePrefersReducedMotion()
   const [frame, setFrame] = useState(1)
+  const [isTapPlaying, setIsTapPlaying] = useState(false)
   const frameRef = useRef(1)
   const timerRef = useRef<number>()
   const delayRef = useRef<number>()
+  const resetDelayRef = useRef<number>()
+  const lastPointerTypeRef = useRef<string | null>(null)
 
   const clipBase = 'assets/animate_clips/wardrobe/' + clip.slug
   const frameSrc = (n: number) =>
@@ -108,8 +113,16 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
     }
   }
 
+  const clearResetDelay = () => {
+    if (resetDelayRef.current !== undefined) {
+      window.clearTimeout(resetDelayRef.current)
+      resetDelayRef.current = undefined
+    }
+  }
+
   useEffect(() => () => {
     clearEnlargeDelay()
+    clearResetDelay()
     stopTimer()
   }, [])
 
@@ -118,14 +131,33 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
     setFrame(n)
   }
 
+  const reset = () => {
+    clearEnlargeDelay()
+    clearResetDelay()
+    stopTimer()
+    setIsTapPlaying(false)
+    showFrame(1)
+  }
+
+  const scheduleReset = () => {
+    clearResetDelay()
+    resetDelayRef.current = window.setTimeout(reset, MOBILE_HOLD_MS)
+  }
+
   // Advance forward from the current frame; hold on the last one. Each frame is
   // a full PNG that replaces the previous, so no two poses overlap.
-  const startTicking = () => {
+  const startTicking = (resetWhenDone = false) => {
     stopTimer()
-    if (frameRef.current >= FRAME_COUNT) return
+    if (frameRef.current >= FRAME_COUNT) {
+      if (resetWhenDone) scheduleReset()
+      return
+    }
     timerRef.current = window.setInterval(() => {
       showFrame(Math.min(frameRef.current + 1, FRAME_COUNT))
-      if (frameRef.current >= FRAME_COUNT) stopTimer()
+      if (frameRef.current >= FRAME_COUNT) {
+        stopTimer()
+        if (resetWhenDone) scheduleReset()
+      }
     }, clip.frameMs)
   }
 
@@ -133,10 +165,36 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
   const beginHover = () => {
     if (prefersReducedMotion) return
     clearEnlargeDelay()
+    clearResetDelay()
     stopTimer()
+    setIsTapPlaying(false)
     showFrame(1)
     delayRef.current = window.setTimeout(startTicking, ENLARGE_MS)
   }
+
+  // Mobile has no real hover, so a tap explicitly opens the preview, plays one
+  // pass, holds the final pose briefly, then collapses.
+  const beginTap = () => {
+    if (prefersReducedMotion) return
+    window.dispatchEvent(new CustomEvent(WARDROBE_PLAY_EVENT, { detail: clip.slug }))
+    clearEnlargeDelay()
+    clearResetDelay()
+    stopTimer()
+    setIsTapPlaying(true)
+    showFrame(1)
+    delayRef.current = window.setTimeout(() => startTicking(true), ENLARGE_MS)
+  }
+
+  useEffect(() => {
+    const handlePlay = (event: Event) => {
+      if ((event as CustomEvent<string>).detail !== clip.slug) reset()
+    }
+
+    window.addEventListener(WARDROBE_PLAY_EVENT, handlePlay)
+    return () => window.removeEventListener(WARDROBE_PLAY_EVENT, handlePlay)
+    // reset intentionally stays local to the current component instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clip.slug])
 
   // Press and hold to freeze on the current frame (study it one frame at a
   // time); release to keep playing from where it paused.
@@ -150,24 +208,40 @@ function WardrobeAnimation({ clip }: { clip: WardrobeClip }) {
     startTicking()
   }
 
-  const reset = () => {
-    clearEnlargeDelay()
-    stopTimer()
-    showFrame(1)
+  const shouldTapPlay = () => {
+    if (lastPointerTypeRef.current === 'touch') return true
+    return window.matchMedia('(hover: none), (pointer: coarse)').matches
   }
 
   return (
     <button
       type="button"
-      className="ward-clip"
-      aria-label={`${clip.label} 动画预览（按住可暂停逐帧观看）`}
+      className={`ward-clip${isTapPlaying ? ' is-playing' : ''}`}
+      aria-label={`${clip.label} 动画预览（手机点按播放，桌面悬停播放）`}
       onBlur={reset}
-      onFocus={beginHover}
-      onPointerEnter={beginHover}
-      onPointerLeave={reset}
-      onPointerDown={pause}
-      onPointerUp={resume}
-      onPointerCancel={resume}
+      onFocus={() => {
+        if (lastPointerTypeRef.current !== 'touch') beginHover()
+      }}
+      onClick={() => {
+        if (shouldTapPlay()) beginTap()
+      }}
+      onPointerEnter={(event) => {
+        if (event.pointerType !== 'touch') beginHover()
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType !== 'touch') reset()
+      }}
+      onPointerDown={(event) => {
+        lastPointerTypeRef.current = event.pointerType
+        if (event.pointerType !== 'touch') pause()
+      }}
+      onPointerUp={(event) => {
+        if (event.pointerType !== 'touch') resume()
+      }}
+      onPointerCancel={(event) => {
+        if (event.pointerType === 'touch') reset()
+        else resume()
+      }}
     >
       <span className="ward-frame-stage" aria-hidden="true">
         <img
