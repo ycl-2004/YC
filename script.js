@@ -168,4 +168,60 @@
       p.addEventListener('mouseleave', function(){ p.style.transform=''; });
     });
   }
+
+  /* ============ 21st.dev-style effects ============ */
+
+  /* ---- meteors (dark values section) ---- */
+  var meteorBox=document.getElementById('meteors');
+  if(meteorBox && !reduce){
+    for(var m=0;m<14;m++){
+      var mt=document.createElement('span'); mt.className='meteor';
+      mt.style.left=(Math.random()*100)+'%';
+      mt.style.animationDuration=(2.4+Math.random()*3.2).toFixed(2)+'s';
+      mt.style.animationDelay=(Math.random()*6).toFixed(2)+'s';
+      meteorBox.appendChild(mt);
+    }
+  }
+
+  /* ---- text reveal: wrap words, light them up on scroll ---- */
+  document.querySelectorAll('.text-reveal').forEach(function(el){
+    if(reduce) return;
+    var i=0;
+    (function wrap(node){
+      [].slice.call(node.childNodes).forEach(function(n){
+        if(n.nodeType===3){ // text node
+          var frag=document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(function(tok){
+            if(tok.trim()===''){ frag.appendChild(document.createTextNode(tok)); return; }
+            var sp=document.createElement('span'); sp.className='word'; sp.textContent=tok;
+            sp.style.transitionDelay=(i*0.05).toFixed(2)+'s'; i++;
+            frag.appendChild(sp);
+          });
+          node.replaceChild(frag,n);
+        } else if(n.nodeType===1 && n.tagName!=='BR'){ wrap(n); }
+      });
+    })(el);
+    var ro=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ el.classList.add('lit'); ro.disconnect(); } }); },{threshold:0.4});
+    ro.observe(el);
+  });
+
+  /* ---- heart burst on finale button ---- */
+  function burstHearts(x,y){
+    if(reduce) return;
+    var glyphs=['♥','✦','♡'];
+    for(var k=0;k<14;k++){
+      var h=document.createElement('span'); h.className='heart-burst';
+      h.textContent=glyphs[k%glyphs.length];
+      var ang=Math.random()*Math.PI*2, dist=50+Math.random()*90;
+      h.style.left=x+'px'; h.style.top=y+'px';
+      h.style.color=['#B23A48','#CB5A78','#3B6EA5'][k%3];
+      h.style.setProperty('--dx',(Math.cos(ang)*dist).toFixed(0)+'px');
+      h.style.setProperty('--dy',(Math.sin(ang)*dist-40).toFixed(0)+'px');
+      h.style.setProperty('--rot',(Math.random()*120-60).toFixed(0)+'deg');
+      document.body.appendChild(h);
+      setTimeout((function(node){ return function(){ node.remove(); }; })(h),950);
+    }
+  }
+  var finaleBtn=document.getElementById('shareProfile');
+  if(finaleBtn){ finaleBtn.addEventListener('click', function(e){ burstHearts(e.clientX,e.clientY); }); }
 })();

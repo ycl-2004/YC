@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500;1,9..144,600&family=Caveat:wght@400;600;700&family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -34,6 +34,7 @@
 
 <!-- ===== HERO ===== -->
 <header class="hero">
+  <div class="aurora" aria-hidden="true"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
   <span class="hero-bgword" data-parallax="0.25" aria-hidden="true">YC</span>
 
   <!-- hero floating stickers removed so they never overlap the headline or stats -->
@@ -41,11 +42,11 @@
 
   <div class="hero-left">
     <p class="eyebrow">Personal IP <span class="dot"></span> <span>Build · Share · Inspire</span></p>
-    <h1 class="serif">你好，<br>我是 <span class="name">YC</span></h1>
+    <h1 class="serif">你好，<br>我是 <span class="name name-shine">YC</span></h1>
     <p class="hero-roles deco">a <span class="rot" id="rotator">creator</span></p>
     <p class="hero-intro">一个在 AI 时代<b>认真生活、浪漫创作</b>的人。写代码、做设计、写音乐、读书、到处走走——把混乱的想法，变成有价值、有温度的东西。</p>
     <div class="hero-actions">
-      <a href="#work" class="btn btn-primary" data-magnetic>看我在创作什么 <span class="ar">↓</span></a>
+      <a href="#work" class="btn btn-primary shimmer" data-magnetic>看我在创作什么 <span class="ar">↓</span></a>
       <a href="#find" class="btn btn-ghost" data-magnetic>找到我 <span class="ar">→</span></a>
     </div>
     <div class="hero-stats">
@@ -60,6 +61,7 @@
       <div class="fig-ring"></div>
       <div class="fig-ring r2"></div>
       <div class="fig-disc"></div>
+      <span class="fig-beam" aria-hidden="true"></span>
       <img class="fig-img" src="assets/stickers/pose-standing.png" alt="YC 本人 · 酒红乱发 + 透明圆框眼镜 + 牛仔外套的 chibi 形象">
       <span class="fig-heart" aria-hidden="true">♥</span>
       <span class="fig-badge b1"><span class="e">⌨️</span>coding</span>
@@ -196,6 +198,7 @@
 
 <!-- ===== VALUES (dark) ===== -->
 <section class="values pad" id="values">
+  <div class="meteors" id="meteors" aria-hidden="true"></div>
   <img class="values-float reveal" src="assets/stickers/pose-thinking.png" alt="" aria-hidden="true">
   <div class="container">
     <div class="values-head reveal">
@@ -220,7 +223,7 @@
   <span class="pq-bgword" data-parallax="0.3" aria-hidden="true">create</span>
   <div class="container">
     <div class="pullquote reveal">
-      <p>把混乱的想法，变成<em>有价值的产品</em>。<br>用音乐记录心情，用旋律表达爱。</p>
+      <p class="text-reveal">把混乱的想法，变成<em>有价值的产品</em>。<br>用音乐记录心情，用旋律表达爱。</p>
       <span class="en">Keep creating. Keep shipping. Keep inspiring.</span>
       <span class="sig">— YC</span>
       <span class="heart-deco" aria-hidden="true">♥</span>
@@ -243,7 +246,7 @@
       <a href="#" data-magnetic data-edit="Twitter/X"><span class="dot"></span>Twitter / X</a>
       <a href="#" data-magnetic data-edit="LinkedIn"><span class="dot"></span>LinkedIn</a>
     </div>
-    <button type="button" class="btn-finale reveal reveal-d3" id="shareProfile" data-magnetic>分享这张 YC 名片 <span class="ar">→</span></button>
+    <button type="button" class="btn-finale shimmer reveal reveal-d3" id="shareProfile" data-magnetic>分享这张 YC 名片 <span class="ar">→</span></button>
     <p class="cta-note reveal reveal-d4">期待和你相遇</p>
   </div>
 </section>
@@ -314,6 +317,6 @@
 </footer>
 
 <script src="assets/html2canvas.min.js"></script>
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>

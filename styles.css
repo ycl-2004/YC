@@ -462,3 +462,74 @@ footer .totop:hover{opacity:1;}
   .mq-track,.scene-track{animation:none!important;}
   .cursor-ring{display:none;}
 }
+
+/* ============================================================
+   21st.dev-style effects (vanilla adaptation) — added for YC
+   Aurora · Border Beam · Meteors · Shimmer · Gradient text ·
+   Text reveal · Heart burst. Color tokens reused from :root.
+   All motion auto-disabled by the reduced-motion block above.
+   ============================================================ */
+
+/* ---- Aurora background (hero) ---- */
+.aurora{position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none;
+  filter:blur(60px); opacity:.55; mix-blend-mode:multiply;}
+.aurora span{position:absolute; display:block; border-radius:50%;}
+.aurora .a1{width:42vw; height:42vw; left:-6%; top:-8%;
+  background:radial-gradient(circle,rgba(178,58,72,.55),transparent 70%); animation:aurora1 18s ease-in-out infinite;}
+.aurora .a2{width:38vw; height:38vw; right:-4%; top:18%;
+  background:radial-gradient(circle,rgba(59,110,165,.5),transparent 70%); animation:aurora2 22s ease-in-out infinite;}
+.aurora .a3{width:34vw; height:34vw; left:28%; bottom:-12%;
+  background:radial-gradient(circle,rgba(203,90,120,.45),transparent 70%); animation:aurora3 20s ease-in-out infinite;}
+@keyframes aurora1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8%,6%) scale(1.15);}}
+@keyframes aurora2{0%,100%{transform:translate(0,0) scale(1.05);}50%{transform:translate(-7%,9%) scale(.9);}}
+@keyframes aurora3{0%,100%{transform:translate(0,0) scale(.95);}50%{transform:translate(6%,-8%) scale(1.2);}}
+
+/* ---- Animated gradient text (hero name) ---- */
+.name-shine{background:linear-gradient(100deg,var(--wine) 0%,var(--blush) 25%,var(--denim) 50%,var(--blush) 75%,var(--wine) 100%);
+  background-size:200% auto; -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:var(--wine); animation:nameshine 6s linear infinite;}
+@keyframes nameshine{to{background-position:200% center;}}
+
+/* ---- Border Beam (figure-stage disc) ---- */
+.fig-beam{position:absolute; inset:14%; border-radius:50%; z-index:1; pointer-events:none;
+  padding:2px; background:conic-gradient(from 0deg,transparent 0deg,transparent 300deg,var(--wine) 340deg,var(--blush) 355deg,transparent 360deg);
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px));
+  animation:beamspin 4.5s linear infinite;}
+@keyframes beamspin{to{transform:rotate(360deg);}}
+
+/* ---- Shimmer sweep on buttons ---- */
+.shimmer{position:relative; overflow:hidden;}
+.shimmer::after{content:''; position:absolute; top:0; left:-130%; width:60%; height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-18deg); animation:shimmer 4.5s ease-in-out infinite; pointer-events:none;}
+@keyframes shimmer{0%{left:-130%;}55%,100%{left:160%;}}
+
+/* ---- Meteors (dark values section) ---- */
+.meteors{position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none;}
+.meteor{position:absolute; top:-10%; width:2px; height:2px; border-radius:50%;
+  background:#cdd9ec; box-shadow:0 0 6px 1px rgba(205,217,236,.7);
+  animation:meteor linear infinite;}
+.meteor::before{content:''; position:absolute; top:50%; left:0; width:60px; height:1px;
+  transform:translateY(-50%); background:linear-gradient(90deg,rgba(205,217,236,.7),transparent);}
+@keyframes meteor{0%{transform:translate(0,0) rotate(215deg); opacity:1;}
+  70%{opacity:1;}100%{transform:translate(-340px,340px) rotate(215deg); opacity:0;}}
+
+/* ---- Text reveal (pull quote, word by word) ---- */
+.text-reveal .word{display:inline-block; opacity:0; filter:blur(8px); transform:translateY(10px);
+  transition:opacity .5s ease,filter .5s ease,transform .5s ease;}
+.text-reveal.lit .word{opacity:1; filter:blur(0); transform:none;}
+
+/* ---- Heart burst particles ---- */
+.heart-burst{position:fixed; z-index:120; pointer-events:none; font-size:18px; will-change:transform,opacity;
+  animation:heartfly .9s ease-out forwards;}
+@keyframes heartfly{0%{opacity:1; transform:translate(-50%,-50%) scale(.4);}
+  100%{opacity:0; transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.1) rotate(var(--rot));}}
+
+/* reduced-motion fallbacks for the new effects */
+@media(prefers-reduced-motion:reduce){
+  .aurora{display:none;}
+  .name-shine{-webkit-text-fill-color:var(--wine); color:var(--wine);}
+  .fig-beam,.shimmer::after,.meteors{display:none;}
+  .text-reveal .word{opacity:1; filter:none; transform:none;}
+}
