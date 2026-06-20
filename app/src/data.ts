@@ -16,6 +16,7 @@ export const roles: string[] = [
   'creator',
   'engineer',
   'dreamer',
+  'connector',
   'music maker',
   'life-long learner',
   'romantic',

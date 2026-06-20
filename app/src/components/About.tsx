@@ -2,7 +2,7 @@ import { asset } from '../lib/asset'
 
 const traits: [string, string][] = [
   ['温暖友善', 'warm'],
-  ['灵感很多', 'ideas'],
+  ['很会读人', 'reads people'],
   ['真诚投入', 'sincere'],
   ['工程思维', 'builder mind'],
   ['热爱音乐', 'music'],

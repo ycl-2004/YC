@@ -115,15 +115,46 @@ export function initEffects(): void {
   const plImg = document.getElementById('portraitLbImg') as HTMLImageElement | null
   const plCap = document.getElementById('portraitLbCap')
   let portraitOpener: HTMLElement | null = null
+  let portraitFrameTimer: number | null = null
+  function stopPortraitFrames() {
+    if (portraitFrameTimer !== null) {
+      window.clearInterval(portraitFrameTimer)
+      portraitFrameTimer = null
+    }
+  }
   function openPortraitLightbox(portrait: HTMLElement) {
     if (!pl || !plImg) return
-    const img = portrait.querySelector<HTMLImageElement>('.pillar-img')
-    if (!img) return
+    stopPortraitFrames()
+    const baseImg = portrait.querySelector<HTMLImageElement>('.pillar-img')
+    const animImg = portrait.querySelector<HTMLImageElement>('.motion-animation')
     const card = portrait.closest('.pillar')
     const en = card?.querySelector('.en')?.textContent || ''
     const title = card?.querySelector('h3')?.textContent || ''
-    plImg.src = img.currentSrc || img.getAttribute('src') || ''
-    plImg.alt = img.alt || title || 'YC 角色动画'
+    const animSrc = animImg?.currentSrc || animImg?.getAttribute('src')
+    const frameDir = portrait.getAttribute('data-frame-dir')
+    if (animSrc) {
+      // animated SVG portrait — the SVG self-animates when shown directly
+      plImg.src = animSrc
+    } else if (frameDir) {
+      // frame-sequence portrait (e.g. reading) — cycle PNG frames in the lightbox
+      const count = Number(portrait.getAttribute('data-frame-count')) || 1
+      const ver = portrait.getAttribute('data-frame-version') || '1'
+      const intervalMs = Number(portrait.getAttribute('data-frame-interval')) || 600
+      let fi = 0
+      const showFrame = () => {
+        plImg.src = `${frameDir}/frame_${String(fi + 1).padStart(2, '0')}.png?v=${ver}`
+      }
+      showFrame()
+      if (!reduce) {
+        portraitFrameTimer = window.setInterval(() => {
+          fi = (fi + 1) % count
+          showFrame()
+        }, intervalMs)
+      }
+    } else if (baseImg) {
+      plImg.src = baseImg.currentSrc || baseImg.getAttribute('src') || ''
+    }
+    plImg.alt = baseImg?.alt || title || 'YC 角色动画'
     if (plCap) plCap.textContent = [en, title].filter(Boolean).join(' · ')
     portraitOpener = portrait
     pl.classList.add('open')
@@ -132,6 +163,7 @@ export function initEffects(): void {
   }
   function closePortraitLightbox() {
     if (!pl) return
+    stopPortraitFrames()
     pl.classList.remove('open')
     document.body.style.overflow = ''
     portraitOpener?.focus()
@@ -208,7 +240,7 @@ export function initEffects(): void {
   }
 
   /* ---- role rotator ---- */
-  const roleWords = ['creator', 'engineer', 'dreamer', 'music maker', 'life-long learner', 'romantic']
+  const roleWords = ['creator', 'engineer', 'dreamer', 'connector', 'music maker', 'life-long learner', 'romantic']
   let ri = 0
   const rot = document.getElementById('rotator')
   if (rot && !reduce) {

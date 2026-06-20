@@ -3,6 +3,7 @@
   --wine:#B23A48; --wine-deep:#8E2C3A;
   --denim:#3B6EA5; --denim-deep:#346294; --denim-light:#9DBDE0; --denim-soft:#DCE7F2;
   --blush:#CB5A78; --blush-deep:#9F3754;
+  --accent:#5E8C68; --accent-deep:#3F7152;  /* 4th accent · sage/eucalyptus 点缀 */
   --cream:#FEFCF6; --cream-deep:#FAF6EB; --paper:#FFFDF8;
   --ink:#1A1A2E; --ink-muted:#4A4A5A; --ink-faint:#626272; --night:#151821;
   --maxw:1240px;
@@ -68,7 +69,7 @@ section{position:relative;}
   display:grid; place-items:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:.98rem;
   box-shadow:0 4px 14px rgba(178,58,72,.3);}
 .brand b{font-family:'Huiwen Mincho','Noto Serif SC',serif;}
-.brand .tag{display:inline-flex; align-items:center; min-height:58px; padding:10px 14px; border:1.5px solid rgba(26,26,46,.07); border-radius:14px;
+.brand .tag{display:inline-flex; align-items:center; height:34px; min-height:0; padding:0 12px; border:1.5px solid rgba(26,26,46,.07); border-radius:10px;
   background:var(--paper); box-shadow:0 2px 10px rgba(0,0,0,.03); font-family:'Fraunces',serif; font-style:italic; color:var(--ink-faint); font-size:.78rem; font-weight:400;}
 .navlinks{display:flex; gap:6px; align-items:center;}
 .navlinks a{position:relative; padding:7px 13px; font-size:.92rem; font-weight:500; color:var(--ink-muted); border-radius:8px;}
@@ -119,7 +120,7 @@ section{position:relative;}
 /* ============ hero ============ */
 .hero{min-height:100vh; display:grid; grid-template-columns:1.06fr .94fr; align-items:center;
   gap:clamp(28px,5vw,72px); max-width:var(--maxw); margin:0 auto;
-  padding:8rem 2rem 5rem; position:relative; overflow:clip;}
+  padding:8rem 2rem 5rem; position:relative;}
 .hero-bgword{position:absolute; top:46%; right:-2%; transform:translateY(-50%);
   font-family:'Fraunces',serif; font-style:italic; font-weight:600;
   font-size:clamp(9rem,32vw,30rem); line-height:.8; color:var(--wine); opacity:.05;
@@ -149,12 +150,12 @@ section{position:relative;}
 .hero-stats .st .l{font-size:.78rem; color:var(--ink-faint); letter-spacing:.04em; margin-top:.3rem;}
 .hero-stats .st .l i{font-style:normal; margin:0 .28em;}
 .hero-stats .st:nth-child(2) .n{color:var(--denim);}
-.hero-stats .st:nth-child(3) .n{color:var(--blush-deep);}
+.hero-stats .st:nth-child(3) .n{color:var(--accent-deep);}
 
 .hero-right{position:relative; z-index:2; display:flex; justify-content:center; align-items:center;}
 .figure-stage{position:relative; width:min(clamp(280px,40vw,440px),100%); aspect-ratio:1;}
 .fig-ring{position:absolute; inset:2%; border:2px dashed var(--denim); border-radius:50%; opacity:.4; animation:spin 30s linear infinite;}
-.fig-ring.r2{inset:11%; border:1.5px solid var(--blush); opacity:.3; animation:spin 22s linear infinite reverse;}
+.fig-ring.r2{inset:11%; border:1.5px solid var(--accent); opacity:.34; animation:spin 22s linear infinite reverse;}
 .fig-disc{position:absolute; inset:14%; border-radius:50%;
   background:radial-gradient(circle at 50% 38%,#fff,var(--cream-deep)); box-shadow:0 24px 60px rgba(178,58,72,.16), inset 0 0 0 1px rgba(178,58,72,.08);}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -166,9 +167,26 @@ section{position:relative;}
   font-size:.8rem; font-weight:600; box-shadow:0 8px 22px rgba(26,26,46,.1); z-index:4; white-space:nowrap;
   border:1px solid rgba(26,26,46,.05);}
 .fig-badge .e{margin-right:5px;}
-.fig-badge.b1{top:12%; left:-6%; color:var(--wine); animation:bob 5s ease-in-out infinite;}
-.fig-badge.b2{top:44%; right:-10%; color:var(--denim); animation:bob 6.5s ease-in-out .4s infinite;}
-.fig-badge.b3{bottom:10%; left:-2%; color:var(--blush-deep); animation:bob 5.6s ease-in-out .8s infinite;}
+.fig-badge::after{content:''; position:absolute; z-index:-1; top:50%; left:6%;
+  width:150%; height:62%; border-radius:50%;
+  background:radial-gradient(closest-side,currentColor,transparent 72%);
+  opacity:.14; filter:blur(9px); transform:translate(0,-50%);
+  animation:badgeTail 5.5s ease-in-out infinite; pointer-events:none;}
+.fig-badge.b1{top:13%; left:-7%; color:var(--wine); transform:translateX(-50%); animation:badgeFloat 5s ease-in-out infinite;}
+.fig-badge.b2{top:46%; right:-11%; color:var(--denim); transform:translateX(-50%); animation:badgeFloat 6.5s ease-in-out .4s infinite;}
+.fig-badge.b3{bottom:9%; left:4%; color:var(--blush-deep); transform:translateX(-50%); animation:badgeFloat 5.6s ease-in-out .8s infinite;}
+.fig-badge.b4{top:50%; left:-11%; color:var(--denim-deep); transform:translateX(-50%); animation:badgeFloat 6.1s ease-in-out 1.1s infinite;}
+.fig-badge.b5{bottom:15%; right:-4%; color:var(--accent-deep); transform:translateX(-50%); animation:badgeFloat 5.3s ease-in-out 1.5s infinite;}
+@keyframes badgeFloat{
+  0%,100%{transform:translate(-50%,0);}
+  25%{transform:translate(calc(-50% - 3px),-6px);}
+  50%{transform:translate(calc(-50% + 3px),-9px);}
+  75%{transform:translate(calc(-50% + 2px),-3px);}
+}
+@keyframes badgeTail{
+  0%,100%{opacity:.12; transform:translate(0,-50%) scaleX(1);}
+  50%{opacity:.34; transform:translate(-16%,-50%) scaleX(1.45);}
+}
 .fig-heart{position:absolute; top:4%; right:12%; font-size:clamp(1.4rem,2.6vw,2.1rem); color:var(--blush-deep);
   filter:drop-shadow(0 4px 8px rgba(203,90,120,.3)); animation:beat 2.4s ease-in-out infinite; z-index:4;}
 @keyframes beat{0%,100%{transform:scale(1);}14%{transform:scale(1.18);}28%{transform:scale(1);}42%{transform:scale(1.12);}}
@@ -509,7 +527,14 @@ footer .totop:hover{opacity:1;}
 @media(max-width:600px){
   body{font-size:15px;}
   .container{padding:0 1.25rem;}
-  .hero{padding:6.5rem 1.25rem 4rem;}
+  .hero{padding:6.5rem 1.25rem 4rem; text-align:center;}   /* center the whole stacked hero so text matches the centered figure + tags */
+  .hero-bgword{display:none;}   /* huge watermark clashes with the name once stacked */
+  .eyebrow{font-size:.7rem; letter-spacing:.18em; margin-bottom:1.1rem; line-height:1.5;}
+  .eyebrow .dot{display:none;}
+  .eyebrow > span:last-child{display:block; margin-top:.28rem;}   /* BUILD · SHARE · INSPIRE on its own line */
+  .hero-namerow{justify-content:center;}
+  .hero-intro{margin-left:auto; margin-right:auto;}
+  .hero-actions{justify-content:center;}
   .hero-actions .btn{width:100%; justify-content:center;}
   .hero-stats{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:2.1rem;}
   .hero-stats .st{min-width:0;}
@@ -524,17 +549,17 @@ footer .totop:hover{opacity:1;}
   .floatsticker{display:none;}
   .values-float{display:none;}
   .cta-figure{display:none;}
-  .hero-right{margin-bottom:5.25rem;}
-  .figure-stage{width:min(300px,76vw); overflow:visible;}
-  .fig-badges{position:absolute; left:50%; bottom:0; z-index:5; display:grid; grid-template-columns:repeat(2,max-content); gap:8px; justify-content:center; transform:translate(-50%,calc(100% + 12px));}
-  .fig-badge,.fig-badge.b1,.fig-badge.b2,.fig-badge.b3{position:static; display:block; margin:0; padding:6px 10px; font-size:.72rem; animation:none;}
-  .fig-badges .b3{grid-column:1 / -1; justify-self:center;}
+  .hero-right{margin-bottom:5.5rem;}
+  .figure-stage{width:min(290px,74vw); overflow:visible;}
+  .fig-badges{position:absolute; left:50%; bottom:0; z-index:5; display:flex; flex-wrap:wrap; justify-content:center; align-content:flex-start; gap:8px; width:max-content; max-width:70vw; transform:translate(-50%,calc(100% + 16px));}
+  .fig-badge,.fig-badge.b1,.fig-badge.b2,.fig-badge.b3,.fig-badge.b4,.fig-badge.b5{position:static; display:inline-flex; align-items:center; margin:0; padding:6px 12px; font-size:.74rem; transform:none; animation:none;}
+  .fig-badge::after{display:none;}
   .fig-note{right:-2%; bottom:4%; font-size:clamp(.95rem,4.5vw,1.1rem);}
   .pillar:not(.span2) h3,.pillar:not(.span2) .kw{max-width:calc(100% - 110px);}
   .ward-rail{grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px;}
   .ward-rail img{grid-column:span 2;}
   .ward-rail img:nth-child(4){grid-column:2 / span 2;}
-  .hero-start{margin-top:-.75rem;}
+  .hero-start{margin-top:-.4rem; text-align:left;}   /* keep the left-border callout as-is (user likes it); just left-align it inside the centered hero */
   .now{padding-bottom:52px;}
   .now-note{grid-template-columns:1fr; gap:22px; padding:26px 22px 34px;}
   .now-list > div{grid-template-columns:1fr; gap:3px; padding:11px 0;}
@@ -562,15 +587,16 @@ footer .totop:hover{opacity:1;}
    ============================================================ */
 
 /* ---- Aurora background (hero) ---- */
-.aurora{position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none;
-  filter:blur(60px); opacity:.55; mix-blend-mode:multiply;}
+.aurora{position:absolute; top:0; bottom:0; left:50%; width:100vw; margin-left:-50vw;
+  z-index:0; overflow:hidden; pointer-events:none;
+  filter:blur(58px); opacity:.72; mix-blend-mode:multiply;}
 .aurora span{position:absolute; display:block; border-radius:50%;}
-.aurora .a1{width:42vw; height:42vw; left:-6%; top:-8%;
-  background:radial-gradient(circle,rgba(178,58,72,.55),transparent 70%); animation:aurora1 18s ease-in-out infinite;}
-.aurora .a2{width:38vw; height:38vw; right:-4%; top:18%;
-  background:radial-gradient(circle,rgba(59,110,165,.5),transparent 70%); animation:aurora2 22s ease-in-out infinite;}
-.aurora .a3{width:34vw; height:34vw; left:28%; bottom:-12%;
-  background:radial-gradient(circle,rgba(203,90,120,.45),transparent 70%); animation:aurora3 20s ease-in-out infinite;}
+.aurora .a1{width:46vw; height:46vw; left:-8%; top:-10%;
+  background:radial-gradient(circle,rgba(178,58,72,.62),transparent 70%); animation:aurora1 18s ease-in-out infinite;}
+.aurora .a2{width:40vw; height:40vw; right:-6%; top:16%;
+  background:radial-gradient(circle,rgba(59,110,165,.56),transparent 70%); animation:aurora2 22s ease-in-out infinite;}
+.aurora .a3{width:36vw; height:36vw; left:26%; bottom:-14%;
+  background:radial-gradient(circle,rgba(203,90,120,.52),transparent 70%); animation:aurora3 20s ease-in-out infinite;}
 @keyframes aurora1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8%,6%) scale(1.15);}}
 @keyframes aurora2{0%,100%{transform:translate(0,0) scale(1.05);}50%{transform:translate(-7%,9%) scale(.9);}}
 @keyframes aurora3{0%,100%{transform:translate(0,0) scale(.95);}50%{transform:translate(6%,-8%) scale(1.2);}}
@@ -580,6 +606,53 @@ footer .totop:hover{opacity:1;}
   background-size:200% auto; -webkit-background-clip:text; background-clip:text;
   -webkit-text-fill-color:transparent; color:var(--wine); animation:nameshine 6s linear infinite;}
 @keyframes nameshine{to{background-position:200% center;}}
+
+/* ---- Hero: name-as-hero headline + glow + staggered entrance ---- */
+.hero-greeting{font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+  font-size:clamp(1.05rem,2.4vw,1.55rem); color:var(--ink-muted); letter-spacing:.005em; margin-bottom:.15rem;}
+.hero .hero-name{position:relative; font-size:clamp(3.2rem,9vw,7rem); line-height:.92;
+  letter-spacing:-.03em; margin-bottom:1rem;}
+.hero .hero-name .name{display:inline-block;}
+.hero-namerow{display:flex; align-items:baseline; flex-wrap:wrap; column-gap:.75em; row-gap:.1rem; margin-bottom:1.5rem;}
+.hero-namerow .hero-name{margin-bottom:0;}
+.hero-namerow .hero-roles{margin-bottom:0; height:auto;}
+.hero-name-glow{position:absolute; left:.32em; top:48%; width:1.5em; height:1.5em; transform:translateY(-50%);
+  background:radial-gradient(circle,rgba(178,58,72,.42),rgba(203,90,120,.20) 45%,transparent 70%);
+  filter:blur(20px); z-index:-1; pointer-events:none; animation:nameGlow 5.5s ease-in-out infinite;}
+@keyframes nameGlow{0%,100%{opacity:.65; transform:translateY(-50%) scale(1);}
+  50%{opacity:1; transform:translateY(-50%) scale(1.13);}}
+
+/* extra soft light pools behind the hero content (brand-colored, not generic AI glow) */
+.hero::before{content:''; position:absolute; top:0; bottom:0; left:50%; width:100vw; margin-left:-50vw;
+  z-index:0; pointer-events:none;
+  background:
+    radial-gradient(38% 52% at 22% 20%,rgba(178,58,72,.14),transparent 70%),
+    radial-gradient(36% 48% at 80% 72%,rgba(59,110,165,.12),transparent 72%),
+    radial-gradient(30% 40% at 50% 50%,rgba(203,90,120,.07),transparent 75%);}
+
+/* staggered fade-up entrance for the hero column (runs once on load) */
+.hero-left > .eyebrow,
+.hero-left > .hero-greeting,
+.hero-left > .hero-namerow,
+.hero-left > .hero-intro,
+.hero-left > .hero-start,
+.hero-left > .hero-actions,
+.hero-left > .hero-stats{opacity:0; animation:heroRise .85s cubic-bezier(.16,1,.3,1) forwards;}
+.hero-left > .eyebrow{animation-delay:.05s;}
+.hero-left > .hero-greeting{animation-delay:.16s;}
+.hero-left > .hero-namerow{animation-delay:.3s;}
+.hero-left > .hero-intro{animation-delay:.56s;}
+.hero-left > .hero-start{animation-delay:.66s;}
+.hero-left > .hero-actions{animation-delay:.76s;}
+.hero-left > .hero-stats{animation-delay:.86s;}
+@keyframes heroRise{from{opacity:0; transform:translateY(24px);}to{opacity:1; transform:none;}}
+
+/* reduced-motion: keep everything visible (global *{animation:none} would otherwise freeze the fade-up at opacity:0) */
+@media(prefers-reduced-motion:reduce){
+  .hero-left > *{opacity:1!important; transform:none!important;}
+  .hero-name-glow{display:none;}
+  .hero::before{background:none;}
+}
 
 /* ---- Border Beam (figure-stage disc) ---- */
 .fig-beam{position:absolute; inset:14%; border-radius:50%; z-index:1; pointer-events:none;
@@ -684,7 +757,7 @@ footer .totop:hover{opacity:1;}
   .hero-stats .st .n{font-size:1.55rem;}
   .hero-stats .st .l{font-size:.64rem;}
   .fig-badges{gap:6px; transform:translate(-50%,calc(100% + 10px));}
-  .fig-badge,.fig-badge.b1,.fig-badge.b2,.fig-badge.b3{padding:5px 8px; font-size:.66rem;}
+  .fig-badge,.fig-badge.b1,.fig-badge.b2,.fig-badge.b3,.fig-badge.b4,.fig-badge.b5{padding:5px 8px; font-size:.66rem;}
   .mq-track span{font-size:.92rem; padding:0 1.1rem; gap:1.1rem;}
   .mq-track span::after{font-size:.6em;}
   .scene-card{width:78vw; max-width:300px;}

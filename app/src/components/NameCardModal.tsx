@@ -41,7 +41,7 @@ export default function NameCardModal() {
             <i className="nc-sep">·</i>
             <span className="t-life">🌿 Life</span>
           </div>
-          <div className="nc-social">小红书 · B站 · YouTube · Instagram · X</div>
+          <div className="nc-social">小红书 · Instagram · 微信 · LinkedIn · 抖音</div>
           <div className="nc-barwrap">
             <span className="nc-bar"></span>
             <span className="nc-bar-heart" aria-hidden="true">

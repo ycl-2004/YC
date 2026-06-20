@@ -16,23 +16,26 @@ export default function Hero() {
         <p className="eyebrow">
           Personal IP <span className="dot"></span> <span>Build · Share · Inspire</span>
         </p>
-        <h1 className="serif">
-          你好，
-          <br />我是 <span className="name name-shine">YC</span>
-        </h1>
-        <p className="hero-roles deco">
-          a{' '}
-          <span className="rot" id="rotator">
-            creator
-          </span>
-        </p>
+        <p className="hero-greeting">你好，我是</p>
+        <div className="hero-namerow">
+          <h1 className="hero-name serif">
+            <span className="hero-name-glow" aria-hidden="true"></span>
+            <span className="name name-shine">YC</span>
+          </h1>
+          <p className="hero-roles deco">
+            a{' '}
+            <span className="rot" id="rotator">
+              creator
+            </span>
+          </p>
+        </div>
         <p className="hero-intro">
           一个在 AI 时代<b>认真生活、浪漫创作</b>
-          的人。用 AI、设计、音乐和文字，把生活变成有价值、有温度的作品。
+          的人。用 AI、设计、音乐和文字，把生活变成有价值、有温度的作品——再用作品，<b>和你相遇</b>。
         </p>
         <p className="hero-start">
           <span>第一次认识 YC？</span>
-          我分享 AI 工具、创作系统、个人 IP、音乐灵感，和认真生活的切片。
+          我分享 AI 工具、创作系统、音乐灵感，和认真生活的切片——希望其中某一篇，刚好遇见你。
         </p>
         <div className="hero-actions">
           <a href="#now" className="btn btn-primary shimmer" data-magnetic>
@@ -90,13 +93,19 @@ export default function Hero() {
           </span>
           <div className="fig-badges" aria-label="YC 的兴趣标签">
             <span className="fig-badge b1">
-              <span className="e">⌨️</span>coding
+              <span className="e">🤖</span>AI
             </span>
             <span className="fig-badge b2">
               <span className="e">♪</span>music
             </span>
             <span className="fig-badge b3">
-              <span className="e">📚</span>always learning
+              <span className="e">📚</span>books
+            </span>
+            <span className="fig-badge b4">
+              <span className="e">🎨</span>design
+            </span>
+            <span className="fig-badge b5">
+              <span className="e">🌿</span>life
             </span>
           </div>
           <span className="fig-note script">红发 + 眼镜，认准我</span>

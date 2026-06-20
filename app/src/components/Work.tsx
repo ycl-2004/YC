@@ -57,7 +57,15 @@ function MotionPortrait({ variant, animatedSrc, frameSequence, staticSrc, alt }:
   ])
 
   return (
-    <button type="button" className={`motion-portrait motion-${variant}`} aria-label="放大查看角色动画">
+    <button
+      type="button"
+      className={`motion-portrait motion-${variant}`}
+      aria-label="放大查看角色动画"
+      data-frame-dir={frameSequence ? asset(frameSequence.directory) : undefined}
+      data-frame-count={frameSequence?.frameCount}
+      data-frame-interval={frameSequence?.intervalMs}
+      data-frame-version={frameSequence?.version}
+    >
       <div className={`motion-picture${animationReady ? ' animation-ready' : ''}${usesFrameSequence ? ' frame-sequence' : ''}`}>
         {/* The reading scene advances through its PNG frames directly: this avoids browser-specific SVG image offsets. */}
         <img

@@ -4,7 +4,7 @@ const values: [string, string, string][] = [
   ['01', '好奇心', 'Curiosity'],
   ['02', '善意', 'Kindness'],
   ['03', '创造力', 'Creativity'],
-  ['04', '自律', 'Discipline'],
+  ['04', '行动', 'Action'],
   ['05', '价值', 'Impact'],
   ['06', '成长', 'Growth'],
 ]
