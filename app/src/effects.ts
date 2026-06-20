@@ -272,7 +272,7 @@ export function initEffects(): void {
       document.addEventListener('mouseleave', () => {
         dot.style.opacity = '0'
       })
-      document.querySelectorAll('a,button,.tag,.pillar,.scene-card,.ward-rail img').forEach((el) => {
+      document.querySelectorAll('a,button,.trait,.pillar,.scene-card,.ward-rail img').forEach((el) => {
         el.addEventListener('mouseenter', () => dot.classList.add('grow'))
         el.addEventListener('mouseleave', () => dot.classList.remove('grow'))
       })
@@ -283,6 +283,15 @@ export function initEffects(): void {
         const r = p.getBoundingClientRect()
         p.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%')
         p.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%')
+      })
+    })
+    // The about traits use the same cursor-led spotlight language as the work cards,
+    // but stay lightweight enough to read as personal notes rather than product UI.
+    document.querySelectorAll<HTMLElement>('.trait').forEach((trait) => {
+      trait.addEventListener('mousemove', (e) => {
+        const r = trait.getBoundingClientRect()
+        trait.style.setProperty('--mx', ((e.clientX - r.left) / r.width) * 100 + '%')
+        trait.style.setProperty('--my', ((e.clientY - r.top) / r.height) * 100 + '%')
       })
     })
     // magnetic
