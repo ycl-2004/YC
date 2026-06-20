@@ -26,6 +26,7 @@ body::before{
 ::selection{background:var(--denim-soft); color:var(--ink);}
 a{color:inherit; text-decoration:none;}
 img{display:block; max-width:100%;}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
 .serif{font-family:'Huiwen Mincho','Noto Serif SC',serif;}
 .script{font-family:'Caveat',cursive;}
 .deco{font-family:'Fraunces',serif; font-style:italic;}
@@ -342,10 +343,25 @@ section{position:relative;}
 .wardrobe{border-top:1px dashed rgba(26,26,46,.16); padding-top:1.4rem;}
 .wardrobe .lbl{font-family:'Caveat',cursive; color:var(--ink-muted); font-size:1.25rem; margin-bottom:.5rem;}
 .wardrobe .lbl b{color:var(--wine); font-style:normal;}
-.ward-rail{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px;}
-.ward-rail img{width:100%; height:auto; aspect-ratio:1; object-fit:contain; padding:6px; border-radius:14px; background:var(--paper);
-  border:1px solid rgba(26,26,46,.06); transition:transform .25s,box-shadow .25s,background .25s;}
-.ward-rail img:hover{transform:translateY(-6px) scale(1.04); box-shadow:0 14px 28px rgba(26,26,46,.12); background:#fff;}
+.ward-rail{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:6px; padding-bottom:1.1rem;}
+.ward-clip{position:relative; z-index:1; display:block; width:100%; aspect-ratio:1; padding:6px; border-radius:14px;
+  border:1px solid rgba(26,26,46,.06); background:var(--paper); cursor:pointer; overflow:visible;
+  transition:transform .26s cubic-bezier(.16,1,.3,1),box-shadow .26s,background .26s,border-color .26s;
+  font:inherit; color:inherit; -webkit-tap-highlight-color:transparent;}
+.ward-clip:hover,.ward-clip:focus-visible{z-index:9; transform:translateY(-6px); box-shadow:0 22px 44px rgba(26,26,46,.18); background:#fff; border-color:rgba(178,58,72,.18);}
+.ward-clip:focus-visible{outline:2px solid var(--denim); outline-offset:3px;}
+.ward-frame-stage{position:relative; display:block; width:100%; height:100%;}
+.ward-frame{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; user-select:none;
+  filter:drop-shadow(0 8px 10px rgba(26,26,46,.08)); transform-origin:50% 76%;
+  transition:transform .3s cubic-bezier(.34,1.4,.5,1),filter .3s;}
+.ward-frame-current{z-index:1;}
+/* pop out of the card to ~3x (not full screen). Tune the scale here. */
+.ward-clip:hover .ward-frame-current,.ward-clip:focus-visible .ward-frame-current{
+  transform:scale(3); filter:drop-shadow(0 22px 30px rgba(26,26,46,.26));}
+.ward-caption{position:absolute; left:50%; bottom:-.9rem; z-index:3; transform:translate(-50%,0); opacity:.34; pointer-events:none;
+  color:var(--ink-faint); font-size:.68rem; font-weight:500; letter-spacing:.04em; line-height:1; white-space:nowrap;
+  text-shadow:0 1px 0 rgba(255,253,248,.9); transition:opacity .2s ease,transform .2s ease,color .2s ease;}
+.ward-clip:hover .ward-caption,.ward-clip:focus-visible .ward-caption{opacity:.68; color:var(--ink-muted); transform:translate(-50%,-1px);}
 
 /* ============ now / currently happening ============ */
 .now{padding:0 0 clamp(52px,8vw,96px); background:var(--cream-deep);}
@@ -651,8 +667,8 @@ footer .totop:hover{opacity:1;}
   .fig-note{right:-2%; bottom:4%; font-size:clamp(.95rem,4.5vw,1.1rem);}
   .pillar:not(.span2) h3,.pillar:not(.span2) .kw{max-width:calc(100% - 110px);}
   .ward-rail{grid-template-columns:repeat(6,minmax(0,1fr)); gap:8px;}
-  .ward-rail img{grid-column:span 2;}
-  .ward-rail img:nth-child(4){grid-column:2 / span 2;}
+  .ward-clip{grid-column:span 2;}
+  .ward-clip:nth-child(4){grid-column:2 / span 2;}
   .hero-start{margin-top:-.4rem; text-align:left;}   /* keep the left-border callout as-is (user likes it); just left-align it inside the centered hero */
   .now{padding-bottom:52px;}
   .now-note{grid-template-columns:1fr; gap:22px; padding:26px 22px 34px;}
@@ -800,25 +816,25 @@ footer .totop:hover{opacity:1;}
    ============================================================ */
 
 /* gentle idle float on character images */
-.pillar-img,.cta-avatar,.ward-rail img,.values-float{animation:imgFloat 6s ease-in-out infinite;}
+.pillar-img,.cta-avatar,.ward-frame-current,.ward-frame-film,.values-float{animation:imgFloat 6s ease-in-out infinite;}
 @keyframes imgFloat{0%,100%{translate:0 0;}50%{translate:0 -7px;}}
 /* stagger so they never bob in lockstep */
 .pillar:nth-child(2) .pillar-img{animation-duration:6.6s; animation-delay:-1.2s;}
 .pillar:nth-child(3) .pillar-img{animation-duration:5.4s; animation-delay:-.6s;}
 .pillar:nth-child(4) .pillar-img{animation-duration:7s; animation-delay:-2.1s;}
 .pillar:nth-child(5) .pillar-img{animation-duration:6.2s; animation-delay:-.9s;}
-.ward-rail img:nth-child(2){animation-delay:-1s;}
-.ward-rail img:nth-child(3){animation-delay:-2s;}
-.ward-rail img:nth-child(4){animation-delay:-3s;}
-.ward-rail img:nth-child(5){animation-delay:-4s;}
+.ward-clip:nth-child(2) .ward-frame-current,.ward-clip:nth-child(2) .ward-frame-film{animation-delay:-1s;}
+.ward-clip:nth-child(3) .ward-frame-current,.ward-clip:nth-child(3) .ward-frame-film{animation-delay:-2s;}
+.ward-clip:nth-child(4) .ward-frame-current,.ward-clip:nth-child(4) .ward-frame-film{animation-delay:-3s;}
+.ward-clip:nth-child(5) .ward-frame-current,.ward-clip:nth-child(5) .ward-frame-film{animation-delay:-4s;}
 .cta-avatar{animation-duration:5s;}
 .values-float{animation-duration:8s;}
 
 /* click-to-hop: character springs up with a little squash-stretch when clicked.
    Hop uses `transform` (idle float keeps using `translate`, so they compose).
    .hop overrides the idle `animation` only while the hop plays, then it resumes. */
-.pillar-img,.cta-avatar,.ward-rail img,.values-float{cursor:pointer;}
-.pillar-img.hop,.cta-avatar.hop,.ward-rail img.hop,.values-float.hop{
+.pillar-img,.cta-avatar,.ward-clip,.values-float{cursor:pointer;}
+.pillar-img.hop,.cta-avatar.hop,.ward-clip.hop,.values-float.hop{
   animation:hop .7s cubic-bezier(.22,1,.36,1);}
 @keyframes hop{
   0%{transform:translateY(0) scale(1,1);}

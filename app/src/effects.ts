@@ -304,7 +304,7 @@ export function initEffects(): void {
       document.addEventListener('mouseleave', () => {
         dot.style.opacity = '0'
       })
-      document.querySelectorAll('a,button,.trait,.pillar,.scene-card,.ward-rail img').forEach((el) => {
+      document.querySelectorAll('a,button,.trait,.pillar,.scene-card,.ward-clip').forEach((el) => {
         el.addEventListener('mouseenter', () => dot.classList.add('grow'))
         el.addEventListener('mouseleave', () => dot.classList.remove('grow'))
       })
@@ -547,7 +547,7 @@ export function initEffects(): void {
   if (finaleBtn) finaleBtn.addEventListener('click', (e) => burstHearts(e.clientX, e.clientY))
 
   /* ---- click a character → springy hop ---- */
-  document.querySelectorAll<HTMLElement>('.cta-avatar,.ward-rail img,.values-float').forEach((img) => {
+  document.querySelectorAll<HTMLElement>('.cta-avatar,.ward-clip,.values-float').forEach((img) => {
     img.addEventListener('click', () => {
       img.classList.remove('hop')
       void img.offsetWidth // reflow so the class re-applies
