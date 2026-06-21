@@ -6,7 +6,7 @@ Input:
     assets/animate_raw/img_stable_4_extra.png (love-brain ending frames only)
 
 Output (per pose):
-    app/public/assets/animate_clips/wardrobe/<pose>/frame_01.png ... 16
+    app/public/assets/animate_clips/wardrobe-clean/<pose>/frame_01.png ... 16
 
 Playback note
 -------------
@@ -43,7 +43,7 @@ from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "assets/animate_raw"
-FRAME_OUT_ROOT = ROOT / "app/public/assets/animate_clips/wardrobe"
+FRAME_OUT_ROOT = ROOT / "app/public/assets/animate_clips/wardrobe-clean"
 STALE_PUBLIC_FRAME_ROOT = ROOT / "app/public/assets/animate_frames/wardrobe"
 STALE_DEBUG_FRAME_ROOT = ROOT / "assets/animate_frames"
 STALE_CLIP_MIRROR = ROOT / "assets/animate_clips"
@@ -108,8 +108,8 @@ SHEETS = [
             FrameOverride(12, "img_stable_4_extra.png", 12, clear_number_label=True),
             FrameOverride(13, "img_stable_4_extra.png", 13, clear_number_label=True),
             FrameOverride(14, "img_stable_4_extra.png", 14, clear_number_label=True),
-            FrameOverride(15, "img_stable_4_extra.png", 15),
-            FrameOverride(16, "img_stable_4_extra.png", 16),
+            FrameOverride(15, "img_stable_4_extra.png", 15, clear_number_label=True),
+            FrameOverride(16, "img_stable_4_extra.png", 16, clear_number_label=True),
         ),
     ),
     # White trousers have exposed outer edges, so use the gentler halo cleanup
@@ -477,8 +477,42 @@ def crop_grid_cell(image: Image.Image, sheet: Sheet, cell_number: int) -> Image.
     return cell.resize((CANVAS, CANVAS), Image.LANCZOS)
 
 
+def has_useful_alpha(image: Image.Image) -> bool:
+    """Whether the source sheet already carries a real cutout alpha channel."""
+    if "A" not in image.getbands():
+        return False
+    alpha = image.getchannel("A")
+    extrema = alpha.getextrema()
+    return extrema[0] < 245
+
+
+def clear_low_alpha_noise(frame: Image.Image, threshold: int = 12) -> Image.Image:
+    """Clear tiny semi-transparent remnants from exported background removal."""
+    rgba = frame.convert("RGBA")
+    pixels = rgba.load()
+    width, height = rgba.size
+    for y in range(height):
+        for x in range(width):
+            red, green, blue, alpha = pixels[x, y]
+            if alpha <= threshold:
+                pixels[x, y] = (0, 0, 0, 0)
+    return rgba
+
+
+def clean_transparent_cell(cell: Image.Image, sheet: Sheet, clear_number_label: bool = False) -> Image.Image:
+    """Clean a cell that already has transparent background in the source PNG."""
+    frame = clear_low_alpha_noise(cell)
+    if sheet.clear_number_label or clear_number_label:
+        clear_top_left_label(frame)
+    clear_top_edge_artifacts(frame)
+    return add_frame_padding(frame, sheet.frame_padding_px)
+
+
 def clean_cell(cell: Image.Image, sheet: Sheet, clear_number_label: bool = False) -> Image.Image:
     """Remove the panel background and source labels from one resized grid cell."""
+    if has_useful_alpha(cell):
+        return clean_transparent_cell(cell, sheet, clear_number_label)
+
     frame = remove_background(cell, sheet.barrier_expand)
     if sheet.clear_number_label or clear_number_label:
         clear_top_left_label(frame)
@@ -496,12 +530,12 @@ def clean_cell(cell: Image.Image, sheet: Sheet, clear_number_label: bool = False
 
 def split_sheet(sheet: Sheet) -> int:
     source_images = {
-        sheet.source: Image.open(RAW_DIR / sheet.source).convert("RGB"),
+        sheet.source: Image.open(RAW_DIR / sheet.source).convert("RGBA"),
     }
     overrides = {override.target_frame: override for override in sheet.frame_overrides}
     for override in sheet.frame_overrides:
         if override.source not in source_images:
-            source_images[override.source] = Image.open(RAW_DIR / override.source).convert("RGB")
+            source_images[override.source] = Image.open(RAW_DIR / override.source).convert("RGBA")
 
     out_dir = FRAME_OUT_ROOT / sheet.slug
     out_dir.mkdir(parents=True, exist_ok=True)

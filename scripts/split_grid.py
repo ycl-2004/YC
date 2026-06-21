@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets/animate_raw/YC_Pose.png"
-OUT_DIRS = [ROOT / "app/public/assets/stickers", ROOT / "assets/stickers"]
+OUT_DIR = ROOT / "app/public/assets/stickers"
 
 GRID = 4
 CANVAS = 314          # uniform output size so every pose aligns identically
@@ -59,18 +59,16 @@ def main():
     xs = [round(i * W / GRID) for i in range(GRID + 1)]
     ys = [round(i * H / GRID) for i in range(GRID + 1)]
 
-    for d in OUT_DIRS:
-        d.mkdir(parents=True, exist_ok=True)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     for (r, c), name in PICKS:
         cell = sheet.crop((xs[c], ys[r], xs[c + 1], ys[r + 1]))
         cell = cell.resize((CANVAS, CANVAS), Image.LANCZOS)
         out = remove_bg(cell)
-        for d in OUT_DIRS:
-            out.save(d / f"{name}.png")
+        out.save(OUT_DIR / f"{name}.png")
         print(f"  {name}.png  <- cell ({r},{c})")
 
-    print(f"Done: {len(PICKS)} poses -> {', '.join(str(d) for d in OUT_DIRS)}")
+    print(f"Done: {len(PICKS)} poses -> {OUT_DIR}")
 
 
 if __name__ == "__main__":

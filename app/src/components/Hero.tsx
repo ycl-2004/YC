@@ -5,14 +5,14 @@ import { asset } from '../lib/asset'
 // Each pose carries its own switch effect (`fx`) and entrance animation
 // (`enter`) so no two transitions feel the same.
 const POSES = [
-  { src: 'assets/stickers/yc-stand.png', label: '叉腰站立', fx: 'halo', enter: 'pop' },
-  { src: 'assets/stickers/yc-wave.png', label: '挥手打招呼', fx: 'wave', enter: 'tilt' },
-  { src: 'assets/stickers/yc-peace.png', label: '比耶', fx: 'star', enter: 'pop' },
-  { src: 'assets/stickers/yc-thumb.png', label: '点赞', fx: 'like', enter: 'pop' },
-  { src: 'assets/stickers/yc-cross.png', label: '抱臂', fx: 'cool', enter: 'slide' },
-  { src: 'assets/stickers/yc-jump.png', label: '起跳', fx: 'jump', enter: 'bounce' },
-  { src: 'assets/stickers/yc-heart.png', label: '比心', fx: 'heart', enter: 'soft' },
-  { src: 'assets/stickers/yc-cheer.png', label: '欢呼', fx: 'cheer', enter: 'pop' },
+  { src: 'assets/stickers/yc-stand.png', label: '叉腰站立', note: '稳稳的', fx: 'halo', enter: 'pop' },
+  { src: 'assets/stickers/yc-wave.png', label: '挥手打招呼', note: '在挥手', fx: 'wave', enter: 'tilt' },
+  { src: 'assets/stickers/yc-peace.png', label: '比耶', note: '比耶中', fx: 'star', enter: 'pop' },
+  { src: 'assets/stickers/yc-thumb.png', label: '点赞', note: '超赞', fx: 'like', enter: 'pop' },
+  { src: 'assets/stickers/yc-cross.png', label: '抱臂', note: '酷酷的', fx: 'cool', enter: 'slide' },
+  { src: 'assets/stickers/yc-jump.png', label: '起跳', note: '开心跳起', fx: 'jump', enter: 'bounce' },
+  { src: 'assets/stickers/yc-heart.png', label: '比心', note: '心动中', fx: 'heart', enter: 'soft' },
+  { src: 'assets/stickers/yc-cheer.png', label: '欢呼', note: '欢呼中', fx: 'cheer', enter: 'pop' },
 ]
 
 const cv = (o: Record<string, string | number>) => o as CSSProperties
@@ -114,13 +114,12 @@ function fxParticles(fx: string) {
 export default function Hero() {
   const [pose, setPose] = useState(0)
   const [clicks, setClicks] = useState(0)
-  const [tapped, setTapped] = useState(false)
   const nextPose = () => {
     setPose((p) => (p + 1) % POSES.length)
     setClicks((c) => c + 1)
-    setTapped(true)
   }
   const current = POSES[pose]
+  const figureNote = clicks > 0 ? current.note : '红发 + 眼镜，认准我'
   return (
     <header className="hero">
       <div className="aurora" aria-hidden="true">
@@ -221,9 +220,6 @@ export default function Hero() {
               {fxParticles(current.fx)}
             </span>
           )}
-          <span className={`fig-hint${tapped ? ' is-hidden' : ''}`} aria-hidden="true">
-            👆 点我换造型
-          </span>
           <span className="fig-heart" aria-hidden="true">
             ♥
           </span>
@@ -244,7 +240,7 @@ export default function Hero() {
               <span className="e">🌿</span>life
             </span>
           </div>
-          <span className="fig-note script">红发 + 眼镜，认准我</span>
+          <span className="fig-note script">{figureNote}</span>
         </div>
       </div>
 

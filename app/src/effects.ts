@@ -1,4 +1,4 @@
-// YC personal site — interactions ported from the original script.js.
+// YC personal site — legacy DOM interactions mounted from React.
 // Runs once after the React tree mounts; all elements it queries are
 // rendered by the components with the same ids / classes / data-attrs.
 import { sceneData } from './data'
