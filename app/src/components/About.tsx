@@ -76,11 +76,96 @@ function wardrobeFrameSrc(clip: WardrobeClip, frame: number) {
   );
 }
 
+function wardrobeFrameSources(clip: WardrobeClip) {
+  return Array.from({ length: FRAME_COUNT }, (_, index) =>
+    wardrobeFrameSrc(clip, index + 1),
+  );
+}
+
+const imagePreloadCache = new Map<string, Promise<void>>();
+const clipPreloadCache = new Map<WardrobeClip["slug"], Promise<void>>();
+const clipReadyCache = new Set<WardrobeClip["slug"]>();
+
+function preloadImage(src: string) {
+  const cached = imagePreloadCache.get(src);
+  if (cached) return cached;
+
+  const request = new Promise<void>((resolve) => {
+    const image = new Image();
+
+    image.decoding = "async";
+    image.onload = () => {
+      const decode = image.decode?.();
+      if (decode) {
+        void decode.then(resolve, resolve);
+        return;
+      }
+      resolve();
+    };
+    image.onerror = () => resolve();
+    image.src = src;
+    if (image.complete) {
+      resolve();
+    }
+  });
+
+  imagePreloadCache.set(src, request);
+  return request;
+}
+
+function preloadWardrobeClip(clip: WardrobeClip) {
+  const cached = clipPreloadCache.get(clip.slug);
+  if (cached) return cached;
+
+  const request = Promise.all([
+    preloadImage(asset(clip.stageImage)),
+    ...wardrobeFrameSources(clip).map(preloadImage),
+  ]).then(() => {
+    clipReadyCache.add(clip.slug);
+  });
+
+  clipPreloadCache.set(clip.slug, request);
+  return request;
+}
+
 function frameDelayMs(clip: WardrobeClip, frame: number) {
   const frameHoldMultipliers = (
     "frameHoldMultipliers" in clip ? clip.frameHoldMultipliers : undefined
   ) as Partial<Record<number, number>> | undefined;
   return clip.frameMs * (frameHoldMultipliers?.[frame] ?? 1);
+}
+
+function useWardrobeClipReady(clip: WardrobeClip | null) {
+  const [isReady, setIsReady] = useState(!clip || clipReadyCache.has(clip.slug));
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    if (!clip) {
+      setIsReady(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    if (clipReadyCache.has(clip.slug)) {
+      setIsReady(true);
+      return () => {
+        isCancelled = true;
+      };
+    }
+
+    setIsReady(false);
+    void preloadWardrobeClip(clip).then(() => {
+      if (!isCancelled) setIsReady(true);
+    });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [clip]);
+
+  return isReady;
 }
 
 function usePrefersReducedMotion() {
@@ -125,6 +210,7 @@ function WardrobeStage({
   canTogglePlayback: boolean;
 }) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const isClipReady = useWardrobeClipReady(clip);
   const [frame, setFrame] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -134,7 +220,13 @@ function WardrobeStage({
   }, [clip?.slug, prefersReducedMotion]);
 
   useEffect(() => {
-    if (!clip || prefersReducedMotion || isPaused || frame >= FRAME_COUNT)
+    if (
+      !clip ||
+      !isClipReady ||
+      prefersReducedMotion ||
+      isPaused ||
+      frame >= FRAME_COUNT
+    )
       return;
 
     const timer = window.setTimeout(
@@ -145,10 +237,11 @@ function WardrobeStage({
     );
 
     return () => window.clearTimeout(timer);
-  }, [clip, frame, isPaused, prefersReducedMotion]);
+  }, [clip, frame, isClipReady, isPaused, prefersReducedMotion]);
 
   const isPlaybackInteractive =
-    canTogglePlayback && Boolean(clip) && !prefersReducedMotion;
+    canTogglePlayback && Boolean(clip) && isClipReady && !prefersReducedMotion;
+  const isPreparingClip = Boolean(clip) && !prefersReducedMotion && !isClipReady;
 
   const togglePlayback = () => {
     if (!isPlaybackInteractive) return;
@@ -164,6 +257,7 @@ function WardrobeStage({
   const stageClassName = [
     "wardrobe-stage",
     isPlaybackInteractive ? "is-interactive" : "",
+    isPreparingClip ? "is-loading" : "",
     isPaused ? "is-paused" : "",
   ]
     .filter(Boolean)
@@ -206,14 +300,18 @@ function WardrobeStage({
               ))}
             </div>
             <span className="wardrobe-playback-pill" aria-hidden="true">
-              {isPaused
+              {isPreparingClip
+                ? "准备动画..."
+                : isPaused
                 ? "已暂停 · 点击继续"
                 : frame >= FRAME_COUNT
                   ? "再看一次"
                   : ""}
             </span>
             <span className="sr-only" aria-live="polite">
-              {isPaused
+              {isPreparingClip
+                ? `${clip.label}动画正在加载。`
+                : isPaused
                 ? `${clip.label}动画已暂停。`
                 : `${clip.label}动画播放到第 ${frame} 帧。`}
             </span>
@@ -308,11 +406,44 @@ export default function About() {
 
   useEffect(() => {
     wardrobeClips.forEach((clip) => {
-      const scene = new Image();
-      scene.src = asset(clip.stageImage);
-      const firstFrame = new Image();
-      firstFrame.src = wardrobeFrameSrc(clip, 1);
+      void preloadImage(asset(clip.stageImage));
+      void preloadImage(wardrobeFrameSrc(clip, 1));
     });
+
+    const warmTimers: number[] = [];
+    const warmAllClips = () => {
+      wardrobeClips.forEach((clip, index) => {
+        warmTimers.push(
+          window.setTimeout(() => {
+            void preloadWardrobeClip(clip);
+          }, index * 220),
+        );
+      });
+    };
+
+    const clearWarmTimers = () => {
+      warmTimers.forEach((timer) => window.clearTimeout(timer));
+    };
+
+    const requestIdle = window.requestIdleCallback?.bind(window);
+    const cancelIdle = window.cancelIdleCallback?.bind(window);
+
+    if (requestIdle && cancelIdle) {
+      const idleId = requestIdle(warmAllClips, {
+        timeout: 1600,
+      });
+
+      return () => {
+        cancelIdle(idleId);
+        clearWarmTimers();
+      };
+    }
+
+    const timer = window.setTimeout(warmAllClips, 500);
+    return () => {
+      window.clearTimeout(timer);
+      clearWarmTimers();
+    };
   }, []);
 
   return (
