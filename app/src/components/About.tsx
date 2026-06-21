@@ -1,117 +1,118 @@
-import { useEffect, useState } from 'react'
-import { asset } from '../lib/asset'
+import { useEffect, useState } from "react";
+import { asset } from "../lib/asset";
 
-const FRAME_COUNT = 16
-const CLIP_ASSET_VERSION = 'frames-16-clean-v14'
-const DEFAULT_STAGE_IMAGE = 'assets/wardrobe-default-coffee-moon.png'
+const FRAME_COUNT = 16;
+const CLIP_ASSET_VERSION = "frames-16-clean-v14";
+const DEFAULT_STAGE_IMAGE = "assets/wardrobe-default-coffee-moon.png";
 
-const versionedAsset = (path: string) => `${asset(path)}?v=${CLIP_ASSET_VERSION}`
+const versionedAsset = (path: string) =>
+  `${asset(path)}?v=${CLIP_ASSET_VERSION}`;
 
 type WardrobeClipConfig = {
-  slug: string
-  label: string
-  alt: string
-  stageImage: string
-  sceneAlt: string
-  tags: readonly string[]
-  frameMs: number
-  frameHoldMultipliers?: Partial<Record<number, number>>
-}
+  slug: string;
+  label: string;
+  alt: string;
+  stageImage: string;
+  sceneAlt: string;
+  tags: readonly string[];
+  frameMs: number;
+  frameHoldMultipliers?: Partial<Record<number, number>>;
+};
 
 const wardrobeClips = [
   {
-    slug: 'tidy-clothes',
-    label: '酷酷的',
-    alt: 'YC 整理黑色外套，摆出酷酷的姿态',
-    stageImage: 'assets/wardrobe-scenes/city-dusk.jpg',
-    sceneAlt: '一座有路灯与城市天际线的黄昏天台',
-    tags: ['独立感', '秩序感', '工程思维', '一直在成长'],
+    slug: "tidy-clothes",
+    label: "帅到飞起",
+    alt: "YC 整理黑色外套，摆出酷酷的姿态",
+    stageImage: "assets/wardrobe-scenes/city-dusk.jpg",
+    sceneAlt: "一座有路灯与城市天际线的黄昏天台",
+    tags: ["独立感", "秩序感", "工程思维", "一直在成长"],
     frameMs: 110,
   },
   {
-    slug: 'listen-music',
-    label: '听音乐',
-    alt: 'YC 戴着耳机听音乐，随节奏点头',
-    stageImage: 'assets/wardrobe-scenes/music-room.jpg',
-    sceneAlt: '一间摆着唱机、耳机与暖灯的音乐小屋',
-    tags: ['热爱音乐', '浪漫主义者', '温暖友善', '梦想家'],
+    slug: "listen-music",
+    label: "乐坛独秀",
+    alt: "YC 戴着耳机听音乐，随节奏点头",
+    stageImage: "assets/wardrobe-scenes/music-room.jpg",
+    sceneAlt: "一间摆着唱机、耳机与暖灯的音乐小屋",
+    tags: ["热爱音乐", "浪漫主义者", "温暖友善", "梦想家"],
     frameMs: 110,
   },
   {
-    slug: 'adjust-glasses-cool',
-    label: '穿搭',
-    alt: 'YC 展示穿搭，推了下眼镜',
-    stageImage: 'assets/wardrobe-scenes/style-studio.jpg',
-    sceneAlt: '一间带落地镜与衣架的晨光穿搭工作室',
-    tags: ['风格表达', '审美直觉', '记录灵感', '真诚投入'],
+    slug: "adjust-glasses-cool",
+    label: "180展示",
+    alt: "YC 展示穿搭，推了下眼镜",
+    stageImage: "assets/wardrobe-scenes/style-studio.jpg",
+    sceneAlt: "一间带落地镜与衣架的晨光穿搭工作室",
+    tags: ["风格表达", "审美直觉", "记录灵感", "真诚投入"],
     frameMs: 110,
   },
   {
-    slug: 'love-brain',
-    label: '恋爱脑',
-    alt: 'YC 的恋爱脑日常：打招呼、自拍、心动',
-    stageImage: 'assets/wardrobe-scenes/flower-date.jpg',
-    sceneAlt: '一条有红色郁金香、单车与花藤拱门的约会小径',
-    tags: ['温暖友善', '真诚投入', '浪漫主义者', '很会读人'],
+    slug: "love-brain",
+    label: "上头了是真上头",
+    alt: "YC 的恋爱脑日常：打招呼、自拍、心动",
+    stageImage: "assets/wardrobe-scenes/flower-date.jpg",
+    sceneAlt: "一条有红色郁金香、单车与花藤拱门的约会小径",
+    tags: ["温暖友善", "真诚投入", "浪漫主义者", "很会读人"],
     frameMs: 110,
     frameHoldMultipliers: { 11: 3 },
   },
   {
-    slug: 'late-backpack-run',
-    label: '要迟到了',
-    alt: 'YC 背着包慌张跑步，像快迟到了一样',
-    stageImage: 'assets/wardrobe-scenes/morning-platform.jpg',
-    sceneAlt: '一座有小钟、咖啡与晨光列车站台的清晨场景',
-    tags: ['行动力', '生活节奏', '一直在成长', '赶路也浪漫'],
+    slug: "late-backpack-run",
+    label: "跑！！",
+    alt: "YC 背着包慌张跑步，像快迟到了一样",
+    stageImage: "assets/wardrobe-scenes/morning-platform.jpg",
+    sceneAlt: "一座有小钟、咖啡与晨光列车站台的清晨场景",
+    tags: ["行动力", "生活节奏", "一直在成长", "赶路也浪漫"],
     frameMs: 110,
   },
-] as const satisfies readonly WardrobeClipConfig[]
+] as const satisfies readonly WardrobeClipConfig[];
 
-type WardrobeClip = (typeof wardrobeClips)[number]
+type WardrobeClip = (typeof wardrobeClips)[number];
 
 function wardrobeFrameSrc(clip: WardrobeClip, frame: number) {
   return versionedAsset(
-    `assets/animate_clips/wardrobe-clean/${clip.slug}/frame_${String(frame).padStart(2, '0')}.png`,
-  )
+    `assets/animate_clips/wardrobe-clean/${clip.slug}/frame_${String(frame).padStart(2, "0")}.png`,
+  );
 }
 
 function frameDelayMs(clip: WardrobeClip, frame: number) {
   const frameHoldMultipliers = (
-    'frameHoldMultipliers' in clip ? clip.frameHoldMultipliers : undefined
-  ) as Partial<Record<number, number>> | undefined
-  return clip.frameMs * (frameHoldMultipliers?.[frame] ?? 1)
+    "frameHoldMultipliers" in clip ? clip.frameHoldMultipliers : undefined
+  ) as Partial<Record<number, number>> | undefined;
+  return clip.frameMs * (frameHoldMultipliers?.[frame] ?? 1);
 }
 
 function usePrefersReducedMotion() {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const updatePreference = () => setPrefersReducedMotion(media.matches)
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(media.matches);
 
-    updatePreference()
-    media.addEventListener('change', updatePreference)
+    updatePreference();
+    media.addEventListener("change", updatePreference);
 
-    return () => media.removeEventListener('change', updatePreference)
-  }, [])
+    return () => media.removeEventListener("change", updatePreference);
+  }, []);
 
-  return prefersReducedMotion
+  return prefersReducedMotion;
 }
 
 function useHoverCapable() {
-  const [canHover, setCanHover] = useState(false)
+  const [canHover, setCanHover] = useState(false);
 
   useEffect(() => {
-    const media = window.matchMedia('(hover: hover) and (pointer: fine)')
-    const updateCapability = () => setCanHover(media.matches)
+    const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const updateCapability = () => setCanHover(media.matches);
 
-    updateCapability()
-    media.addEventListener('change', updateCapability)
+    updateCapability();
+    media.addEventListener("change", updateCapability);
 
-    return () => media.removeEventListener('change', updateCapability)
-  }, [])
+    return () => media.removeEventListener("change", updateCapability);
+  }, []);
 
-  return canHover
+  return canHover;
 }
 
 function WardrobeStage({
@@ -119,58 +120,71 @@ function WardrobeStage({
   position,
   canTogglePlayback,
 }: {
-  clip: WardrobeClip | null
-  position: number
-  canTogglePlayback: boolean
+  clip: WardrobeClip | null;
+  position: number;
+  canTogglePlayback: boolean;
 }) {
-  const prefersReducedMotion = usePrefersReducedMotion()
-  const [frame, setFrame] = useState(1)
-  const [isPaused, setIsPaused] = useState(false)
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [frame, setFrame] = useState(1);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    setFrame(1)
-    setIsPaused(false)
-  }, [clip?.slug, prefersReducedMotion])
+    setFrame(1);
+    setIsPaused(false);
+  }, [clip?.slug, prefersReducedMotion]);
 
   useEffect(() => {
-    if (!clip || prefersReducedMotion || isPaused || frame >= FRAME_COUNT) return
+    if (!clip || prefersReducedMotion || isPaused || frame >= FRAME_COUNT)
+      return;
 
-    const timer = window.setTimeout(() => {
-      setFrame((currentFrame) => Math.min(currentFrame + 1, FRAME_COUNT))
-    }, frameDelayMs(clip, frame))
+    const timer = window.setTimeout(
+      () => {
+        setFrame((currentFrame) => Math.min(currentFrame + 1, FRAME_COUNT));
+      },
+      frameDelayMs(clip, frame),
+    );
 
-    return () => window.clearTimeout(timer)
-  }, [clip, frame, isPaused, prefersReducedMotion])
+    return () => window.clearTimeout(timer);
+  }, [clip, frame, isPaused, prefersReducedMotion]);
 
-  const isPlaybackInteractive = canTogglePlayback && Boolean(clip) && !prefersReducedMotion
+  const isPlaybackInteractive =
+    canTogglePlayback && Boolean(clip) && !prefersReducedMotion;
 
   const togglePlayback = () => {
-    if (!isPlaybackInteractive) return
+    if (!isPlaybackInteractive) return;
     if (frame >= FRAME_COUNT) {
-      setFrame(1)
-      setIsPaused(false)
-      return
+      setFrame(1);
+      setIsPaused(false);
+      return;
     }
-    setIsPaused((current) => !current)
-  }
+    setIsPaused((current) => !current);
+  };
 
-  const stageNumber = clip ? String(position).padStart(2, '0') : '00'
+  const stageNumber = clip ? String(position).padStart(2, "0") : "00";
   const stageClassName = [
-    'wardrobe-stage',
-    isPlaybackInteractive ? 'is-interactive' : '',
-    isPaused ? 'is-paused' : '',
-  ].filter(Boolean).join(' ')
+    "wardrobe-stage",
+    isPlaybackInteractive ? "is-interactive" : "",
+    isPaused ? "is-paused" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   const stageContent = (
     <>
       <div
-        className={`wardrobe-stage-visual${clip ? ` is-${clip.slug}` : ' is-default'}`}
-        key={clip?.slug ?? 'moon-note'}
-        style={{ backgroundImage: `url(${asset(clip?.stageImage ?? DEFAULT_STAGE_IMAGE)})` }}
+        className={`wardrobe-stage-visual${clip ? ` is-${clip.slug}` : " is-default"}`}
+        key={clip?.slug ?? "moon-note"}
+        style={{
+          backgroundImage: `url(${asset(clip?.stageImage ?? DEFAULT_STAGE_IMAGE)})`,
+        }}
       >
         <div className="wardrobe-stage-topline" aria-hidden="true">
           <span>YC&apos;s little world</span>
-          <span>{clip ? `${stageNumber} / ${String(wardrobeClips.length).padStart(2, '0')}` : 'day to night'}</span>
+          <span>
+            {clip
+              ? `${stageNumber} / ${String(wardrobeClips.length).padStart(2, "0")}`
+              : "day to night"}
+          </span>
         </div>
         {clip ? (
           <>
@@ -181,38 +195,57 @@ function WardrobeStage({
               draggable={false}
               loading="eager"
             />
-            <div className="wardrobe-keyword-cloud" aria-label={`${clip.label}的主题标签`}>
-              {clip.tags.map((tag) => <span className="wardrobe-keyword" key={tag}>{tag}</span>)}
+            <div
+              className="wardrobe-keyword-cloud"
+              aria-label={`${clip.label}的主题标签`}
+            >
+              {clip.tags.map((tag) => (
+                <span className="wardrobe-keyword" key={tag}>
+                  {tag}
+                </span>
+              ))}
             </div>
             <span className="wardrobe-playback-pill" aria-hidden="true">
-              {isPaused ? '已暂停 · 点击继续' : frame >= FRAME_COUNT ? '再看一次' : ''}
+              {isPaused
+                ? "已暂停 · 点击继续"
+                : frame >= FRAME_COUNT
+                  ? "再看一次"
+                  : ""}
             </span>
             <span className="sr-only" aria-live="polite">
-              {isPaused ? `${clip.label}动画已暂停。` : `${clip.label}动画播放到第 ${frame} 帧。`}
+              {isPaused
+                ? `${clip.label}动画已暂停。`
+                : `${clip.label}动画播放到第 ${frame} 帧。`}
             </span>
           </>
         ) : (
-          <p className="sr-only">YC 在月光下望着月亮。悬停下方造型可进入不同小场景。</p>
+          <p className="sr-only">
+            YC 在月光下望着月亮。悬停下方造型可进入不同小场景。
+          </p>
         )}
       </div>
     </>
-  )
+  );
 
   if (!isPlaybackInteractive) {
-    return <div className={stageClassName} role="status" aria-live="polite">{stageContent}</div>
+    return (
+      <div className={stageClassName} role="status" aria-live="polite">
+        {stageContent}
+      </div>
+    );
   }
 
   return (
     <button
       type="button"
       className={stageClassName}
-      aria-label={`${clip?.label ?? '当前造型'}动画：${isPaused ? '继续播放' : frame >= FRAME_COUNT ? '重新播放' : '切换播放状态'}`}
+      aria-label={`${clip?.label ?? "当前造型"}动画：${isPaused ? "继续播放" : frame >= FRAME_COUNT ? "重新播放" : "切换播放状态"}`}
       aria-pressed={isPaused}
       onClick={togglePlayback}
     >
       {stageContent}
     </button>
-  )
+  );
 }
 
 function WardrobeLook({
@@ -222,26 +255,26 @@ function WardrobeLook({
   onPreview,
   onActivate,
 }: {
-  clip: WardrobeClip
-  isActive: boolean
-  canHover: boolean
-  onPreview: () => void
-  onActivate: () => void
+  clip: WardrobeClip;
+  isActive: boolean;
+  canHover: boolean;
+  onPreview: () => void;
+  onActivate: () => void;
 }) {
   return (
     <button
       type="button"
-      className={`ward-clip${isActive ? ' is-active' : ''}`}
+      className={`ward-clip${isActive ? " is-active" : ""}`}
       aria-label={`选择「${clip.label}」造型：${clip.sceneAlt}`}
       aria-pressed={isActive}
       onClick={() => {
-        if (!canHover) onActivate()
+        if (!canHover) onActivate();
       }}
       onFocus={() => {
-        if (canHover) onPreview()
+        if (canHover) onPreview();
       }}
       onPointerEnter={(event) => {
-        if (canHover && event.pointerType === 'mouse') onPreview()
+        if (canHover && event.pointerType === "mouse") onPreview();
       }}
     >
       <span
@@ -256,25 +289,31 @@ function WardrobeLook({
         draggable={false}
         loading="lazy"
       />
-      <span className="ward-caption" aria-hidden="true">{clip.label}</span>
+      <span className="ward-caption" aria-hidden="true">
+        {clip.label}
+      </span>
     </button>
-  )
+  );
 }
 
 export default function About() {
-  const [activeSlug, setActiveSlug] = useState<WardrobeClip['slug'] | null>(null)
-  const canHover = useHoverCapable()
-  const activeIndex = activeSlug ? wardrobeClips.findIndex((clip) => clip.slug === activeSlug) : -1
-  const activeClip = activeIndex >= 0 ? wardrobeClips[activeIndex] : null
+  const [activeSlug, setActiveSlug] = useState<WardrobeClip["slug"] | null>(
+    null,
+  );
+  const canHover = useHoverCapable();
+  const activeIndex = activeSlug
+    ? wardrobeClips.findIndex((clip) => clip.slug === activeSlug)
+    : -1;
+  const activeClip = activeIndex >= 0 ? wardrobeClips[activeIndex] : null;
 
   useEffect(() => {
     wardrobeClips.forEach((clip) => {
-      const scene = new Image()
-      scene.src = asset(clip.stageImage)
-      const firstFrame = new Image()
-      firstFrame.src = wardrobeFrameSrc(clip, 1)
-    })
-  }, [])
+      const scene = new Image();
+      scene.src = asset(clip.stageImage);
+      const firstFrame = new Image();
+      firstFrame.src = wardrobeFrameSrc(clip, 1);
+    });
+  }, []);
 
   return (
     <section className="about pad" id="about">
@@ -284,26 +323,39 @@ export default function About() {
             <span className="sec-num">01</span>
             <h2 className="sec-title serif">关于我</h2>
             <p>
-              我相信 <span className="hl">理性</span> 和 <span className="hl-d">浪漫</span>{' '}
-              可以共存：用工程思维把事情做扎实，也让浪漫感受留在作品里。
+              <span className="hl">理性</span> 和{" "}
+              <span className="hl-d">浪漫</span> 共存
             </p>
-            <p>恋爱脑，但也很上进。认真对待每一段关系、每一个想法，和每一行代码。</p>
             <p>
-              不追求完美，只追求一直在路上：<span className="hl-b">Progress &gt; Perfection.</span>
+              用工程思维把事情做扎实，把<span className="hl">浪漫</span>
+              感受留在<span className="hl">细节</span>里。
             </p>
-            <span className="about-sign script">— 这就是 YC ♥</span>
+            <p>
+              <span className="hl-d">恋爱脑</span>
+              ，也上进。认真对待每一个关系，想法，和作品。
+            </p>
+            <p>
+              不追求一路完美，只追求路上永远：
+              <span className="hl-b">Progress &gt; Perfection.</span>
+            </p>
+            <span className="about-sign script">— YC ♥ Content Creater</span>
           </div>
           <div className="reveal reveal-d1">
             <div
               className="wardrobe"
               onPointerLeave={(event) => {
-                if (canHover && event.pointerType === 'mouse') setActiveSlug(null)
+                if (canHover && event.pointerType === "mouse")
+                  setActiveSlug(null);
               }}
             >
               <p className="lbl script">
-                同一个 <b>YC</b>，很多面；换身衣服，还是我 →
+                多面 <b>YC</b>；，都是我 →
               </p>
-              <WardrobeStage clip={activeClip} position={activeIndex + 1} canTogglePlayback={canHover} />
+              <WardrobeStage
+                clip={activeClip}
+                position={activeIndex + 1}
+                canTogglePlayback={canHover}
+              />
               <div className="ward-rail">
                 {wardrobeClips.map((clip) => (
                   <WardrobeLook
@@ -313,7 +365,9 @@ export default function About() {
                     canHover={canHover}
                     onPreview={() => setActiveSlug(clip.slug)}
                     onActivate={() => {
-                      setActiveSlug((current) => current === clip.slug ? null : clip.slug)
+                      setActiveSlug((current) =>
+                        current === clip.slug ? null : clip.slug,
+                      );
                     }}
                   />
                 ))}
@@ -323,5 +377,5 @@ export default function About() {
         </div>
       </div>
     </section>
-  )
+  );
 }

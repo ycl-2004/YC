@@ -1,125 +1,198 @@
-import { useState } from 'react'
-import type { CSSProperties } from 'react'
-import { asset } from '../lib/asset'
+import { useState } from "react";
+import type { CSSProperties } from "react";
+import { asset } from "../lib/asset";
 
 // Each pose carries its own switch effect (`fx`) and entrance animation
 // (`enter`) so no two transitions feel the same.
 const POSES = [
-  { src: 'assets/stickers/yc-stand.png', label: '叉腰站立', note: '稳稳的', fx: 'halo', enter: 'pop' },
-  { src: 'assets/stickers/yc-wave.png', label: '挥手打招呼', note: '在挥手', fx: 'wave', enter: 'tilt' },
-  { src: 'assets/stickers/yc-peace.png', label: '比耶', note: '比耶中', fx: 'star', enter: 'pop' },
-  { src: 'assets/stickers/yc-thumb.png', label: '点赞', note: '超赞', fx: 'like', enter: 'pop' },
-  { src: 'assets/stickers/yc-cross.png', label: '抱臂', note: '酷酷的', fx: 'cool', enter: 'slide' },
-  { src: 'assets/stickers/yc-jump.png', label: '起跳', note: '开心跳起', fx: 'jump', enter: 'bounce' },
-  { src: 'assets/stickers/yc-heart.png', label: '比心', note: '心动中', fx: 'heart', enter: 'soft' },
-  { src: 'assets/stickers/yc-cheer.png', label: '欢呼', note: '欢呼中', fx: 'cheer', enter: 'pop' },
-]
+  {
+    src: "assets/stickers/yc-stand.png",
+    label: "叉腰站立",
+    note: "稳的稳的",
+    fx: "halo",
+    enter: "pop",
+  },
+  {
+    src: "assets/stickers/yc-wave.png",
+    label: "挥手打招呼",
+    note: "看看我",
+    fx: "wave",
+    enter: "tilt",
+  },
+  {
+    src: "assets/stickers/yc-peace.png",
+    label: "比耶",
+    note: "耶～～",
+    fx: "star",
+    enter: "pop",
+  },
+  {
+    src: "assets/stickers/yc-thumb.png",
+    label: "点赞",
+    note: "超赞呀呀",
+    fx: "like",
+    enter: "pop",
+  },
+  {
+    src: "assets/stickers/yc-cross.png",
+    label: "抱臂",
+    note: "酷到飞起",
+    fx: "cool",
+    enter: "slide",
+  },
+  {
+    src: "assets/stickers/yc-jump.png",
+    label: "起跳",
+    note: "嘻嘻开心",
+    fx: "jump",
+    enter: "bounce",
+  },
+  {
+    src: "assets/stickers/yc-heart.png",
+    label: "比心",
+    note: "上头了我不说",
+    fx: "heart",
+    enter: "soft",
+  },
+  {
+    src: "assets/stickers/yc-cheer.png",
+    label: "欢呼",
+    note: "啊啊啊啊啊",
+    fx: "cheer",
+    enter: "pop",
+  },
+];
 
-const cv = (o: Record<string, string | number>) => o as CSSProperties
+const cv = (o: Record<string, string | number>) => o as CSSProperties;
 
 // Even ring of N particles, centred on the figure.
 const radial = (n: number, dist: number) =>
   Array.from({ length: n }, (_, k) => {
-    const a = (k / n) * Math.PI * 2 - Math.PI / 2
+    const a = (k / n) * Math.PI * 2 - Math.PI / 2;
     return cv({
-      '--tx': `${Math.round(Math.cos(a) * dist)}px`,
-      '--ty': `${Math.round(Math.sin(a) * dist)}px`,
-      '--d': `${(k % 4) * 0.025}s`,
-    })
-  })
+      "--tx": `${Math.round(Math.cos(a) * dist)}px`,
+      "--ty": `${Math.round(Math.sin(a) * dist)}px`,
+      "--d": `${(k % 4) * 0.025}s`,
+    });
+  });
 
-const CONFETTI = ['#e8657a', '#5b8cd1', '#f4b740', '#5E8C68', '#b23a48']
+const CONFETTI = ["#e8657a", "#5b8cd1", "#f4b740", "#5E8C68", "#b23a48"];
 
 function fxParticles(fx: string) {
   switch (fx) {
-    case 'star': // peace → gold starburst
+    case "star": // peace → gold starburst
       return radial(7, 96).map((s, k) => (
         <i key={k} className="st" style={s}>
-          {['✦', '✧', '★'][k % 3]}
+          {["✦", "✧", "★"][k % 3]}
         </i>
-      ))
-    case 'cheer': // cheer → colorful confetti explosion
+      ));
+    case "cheer": // cheer → colorful confetti explosion
       return radial(12, 112).map((s, k) => (
-        <i key={k} className="cf" style={cv({ ...(s as object), '--c': CONFETTI[k % CONFETTI.length] })} />
-      ))
-    case 'heart': // heart → stream of hearts floating up
+        <i
+          key={k}
+          className="cf"
+          style={cv({ ...(s as object), "--c": CONFETTI[k % CONFETTI.length] })}
+        />
+      ));
+    case "heart": // heart → stream of hearts floating up
       return Array.from({ length: 7 }, (_, k) => (
         <i
           key={k}
           className="ht"
           style={cv({
-            '--x': `${(k - 3) * 16}px`,
-            '--drift': `${(k % 2 ? 1 : -1) * 14}px`,
-            '--d': `${k * 0.06}s`,
+            "--x": `${(k - 3) * 16}px`,
+            "--drift": `${(k % 2 ? 1 : -1) * 14}px`,
+            "--d": `${k * 0.06}s`,
             fontSize: `${0.8 + (k % 3) * 0.35}rem`,
           })}
         >
           ♥
         </i>
-      ))
-    case 'wave': // wave → dots fanning up from the hand
+      ));
+    case "wave": // wave → dots fanning up from the hand
       return Array.from({ length: 5 }, (_, k) => {
-        const ang = ((-150 + k * 22) * Math.PI) / 180
-        const dist = 34 + k * 5
+        const ang = ((-150 + k * 22) * Math.PI) / 180;
+        const dist = 34 + k * 5;
         return (
           <i
             key={k}
             className="d"
             style={cv({
-              '--tx': `${Math.round(Math.cos(ang) * dist)}px`,
-              '--ty': `${Math.round(Math.sin(ang) * dist)}px`,
-              '--d': `${k * 0.05}s`,
+              "--tx": `${Math.round(Math.cos(ang) * dist)}px`,
+              "--ty": `${Math.round(Math.sin(ang) * dist)}px`,
+              "--d": `${k * 0.05}s`,
             })}
           />
-        )
-      })
-    case 'like': // thumbs up → 👍 and +1 rising
+        );
+      });
+    case "like": // thumbs up → 👍 and +1 rising
       return [
-        <i key="t" className="lk thumb" style={cv({ '--x': '0px', '--d': '0s' })}>
+        <i
+          key="t"
+          className="lk thumb"
+          style={cv({ "--x": "0px", "--d": "0s" })}
+        >
           👍
         </i>,
-        ...([
-          ['+1', '-26px', '.08s'],
-          ['+1', '24px', '.16s'],
-          ['♥', '-6px', '.24s'],
-        ] as const).map(([t, x, d], k) => (
-          <i key={k} className="lk plus" style={cv({ '--x': x, '--d': d })}>
+        ...(
+          [
+            ["+1", "-26px", ".08s"],
+            ["+1", "24px", ".16s"],
+            ["♥", "-6px", ".24s"],
+          ] as const
+        ).map(([t, x, d], k) => (
+          <i key={k} className="lk plus" style={cv({ "--x": x, "--d": d })}>
             {t}
           </i>
         )),
-      ]
-    case 'cool': // arms crossed → shutter glint sweep + glasses sparkle
+      ];
+    case "cool": // arms crossed → shutter glint sweep + glasses sparkle
       return [
         <span key="g" className="glint" />,
-        <i key="a" className="gl" style={cv({ left: '40%', top: '40%', '--d': '.12s' })}>
+        <i
+          key="a"
+          className="gl"
+          style={cv({ left: "40%", top: "40%", "--d": ".12s" })}
+        >
           ✦
         </i>,
-        <i key="b" className="gl" style={cv({ left: '58%', top: '40%', '--d': '.2s' })}>
+        <i
+          key="b"
+          className="gl"
+          style={cv({ left: "58%", top: "40%", "--d": ".2s" })}
+        >
           ✦
         </i>,
-      ]
-    case 'jump': // jump → dust puff at feet + upward energy streaks
+      ];
+    case "jump": // jump → dust puff at feet + upward energy streaks
       return [
         <span key="d" className="dust" />,
         ...Array.from({ length: 5 }, (_, k) => (
-          <i key={k} className="ln" style={cv({ '--x': `${(k - 2) * 22}px`, '--d': `${k * 0.04}s` })} />
+          <i
+            key={k}
+            className="ln"
+            style={cv({ "--x": `${(k - 2) * 22}px`, "--d": `${k * 0.04}s` })}
+          />
         )),
-      ]
-    case 'halo': // calm → soft halo pulse, no particles
+      ];
+    case "halo": // calm → soft halo pulse, no particles
     default:
-      return [<span key="r1" className="hl" />, <span key="r2" className="hl r2" />]
+      return [
+        <span key="r1" className="hl" />,
+        <span key="r2" className="hl r2" />,
+      ];
   }
 }
 
 export default function Hero() {
-  const [pose, setPose] = useState(0)
-  const [clicks, setClicks] = useState(0)
+  const [pose, setPose] = useState(0);
+  const [clicks, setClicks] = useState(0);
   const nextPose = () => {
-    setPose((p) => (p + 1) % POSES.length)
-    setClicks((c) => c + 1)
-  }
-  const current = POSES[pose]
-  const figureNote = clicks > 0 ? current.note : '红发 + 眼镜，认准我'
+    setPose((p) => (p + 1) % POSES.length);
+    setClicks((c) => c + 1);
+  };
+  const current = POSES[pose];
+  const figureNote = clicks > 0 ? current.note : "红发 + 眼镜，认准我";
   return (
     <header className="hero">
       <div className="aurora" aria-hidden="true">
@@ -133,7 +206,8 @@ export default function Hero() {
 
       <div className="hero-left">
         <p className="eyebrow">
-          Personal IP <span className="dot"></span> <span>Build · Share · Inspire</span>
+          Personal IP <span className="dot"></span>{" "}
+          <span>Build · Share · Inspire</span>
         </p>
         <p className="hero-greeting">你好，我是</p>
         <div className="hero-namerow">
@@ -142,19 +216,26 @@ export default function Hero() {
             <span className="name name-shine">YC</span>
           </h1>
           <p className="hero-roles deco">
-            a{' '}
+            a{" "}
             <span className="rot" id="rotator">
               creator
             </span>
           </p>
         </div>
         <p className="hero-intro">
-          一个在 AI 时代<b>认真生活、浪漫创作</b>
-          的人。用 AI、设计、音乐和文字，把生活变成有价值、有温度的作品——再用作品，<b>和你相遇</b>。
+          <span className="hero-intro-line">
+            <b>认真生活，浪漫创作</b>
+          </span>
+          <span className="hero-intro-line">
+            用 AI、设计、音乐和文字，把生活慢慢做成<b>作品</b>，也<b>和你相遇</b>。
+          </span>
         </p>
         <p className="hero-start">
-          <span>第一次认识 YC？</span>
-          我分享 AI 工具、创作系统、音乐灵感，和认真生活的切片——希望其中某一篇，刚好遇见你。
+          <span className="hero-start-title">第一次认识 YC？</span>
+          <span className="hero-start-line">
+            分享 <b>AI 工具</b>，<b>创作系统</b>，<b>音乐灵感</b>，和认真生活的切片
+          </span>
+          <span className="hero-start-line">——真的很高兴遇见也有兴趣的妳</span>
         </p>
         <div className="hero-actions">
           <a href="#now" className="btn btn-primary shimmer" data-magnetic>
@@ -164,35 +245,35 @@ export default function Hero() {
             关注 YC <span className="ar">→</span>
           </a>
         </div>
-          <div className="hero-stats">
-            <div className="st">
-              <div className="n" data-count="5">
-                0
-              </div>
-              <div className="l">
-                <span>创作方向</span>
-                <i aria-hidden="true">·</i>
-                <span className="stat-en">directions</span>
-              </div>
+        <div className="hero-stats">
+          <div className="st">
+            <div className="n" data-count="5">
+              0
             </div>
-            <div className="st">
-              <div className="n" data-count="8">
-                0
-              </div>
-              <div className="l">
-                <span>性格标签</span>
-                <i aria-hidden="true">·</i>
-                <span className="stat-en">traits</span>
-              </div>
+            <div className="l">
+              <span>创作方向</span>
+              <i aria-hidden="true">·</i>
+              <span className="stat-en">directions</span>
             </div>
-            <div className="st">
-              <div className="n">∞</div>
-              <div className="l">
-                <span>可能性</span>
-                <i aria-hidden="true">·</i>
-                <span className="stat-en">possibilities</span>
-              </div>
+          </div>
+          <div className="st">
+            <div className="n" data-count="8">
+              0
             </div>
+            <div className="l">
+              <span>性格标签</span>
+              <i aria-hidden="true">·</i>
+              <span className="stat-en">traits</span>
+            </div>
+          </div>
+          <div className="st">
+            <div className="n">∞</div>
+            <div className="l">
+              <span>可能性</span>
+              <i aria-hidden="true">·</i>
+              <span className="stat-en">possibilities</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -216,7 +297,11 @@ export default function Hero() {
             />
           </button>
           {clicks > 0 && (
-            <span className={`fig-fx fx-${current.fx}`} key={clicks} aria-hidden="true">
+            <span
+              className={`fig-fx fx-${current.fx}`}
+              key={clicks}
+              aria-hidden="true"
+            >
               {fxParticles(current.fx)}
             </span>
           )}
@@ -249,5 +334,5 @@ export default function Hero() {
         <span className="line"></span>
       </div>
     </header>
-  )
+  );
 }

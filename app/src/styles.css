@@ -141,10 +141,13 @@ section{position:relative;}
   color:var(--ink-muted); margin-bottom:1.4rem; height:1.5em;}
 .hero-roles .rot{color:var(--denim); font-weight:600; font-style:normal; border-bottom:2px solid var(--denim-soft);}
 .hero-intro{font-size:1.07rem; color:var(--ink-muted); max-width:31em; margin-bottom:2.1rem;}
+.hero-intro-line{display:block;}
 .hero-intro b{color:var(--wine); font-weight:700;}
 .hero-start{max-width:34em; margin:-.85rem 0 1.9rem; padding-left:14px; border-left:2px solid var(--denim-light);
   color:var(--ink-muted); font-size:.92rem; line-height:1.7;}
-.hero-start span{display:block; color:var(--wine); font-family:'Fraunces','Noto Serif SC',serif; font-style:italic; font-weight:600; margin-bottom:2px;}
+.hero-start-title{display:block; color:var(--wine); font-family:'Fraunces','Noto Serif SC',serif; font-style:italic; font-weight:600; margin-bottom:2px;}
+.hero-start-line{display:block;}
+.hero-start b{color:var(--wine); font-weight:700;}
 .hero-actions{display:flex; gap:14px; flex-wrap:wrap; align-items:center;}
 .hero-stats{display:flex; gap:clamp(20px,3vw,40px); margin-top:2.6rem;}
 .hero-stats .st .n{font-family:'Fraunces',serif; font-weight:600; font-size:clamp(1.7rem,3vw,2.3rem); color:var(--wine); line-height:1;}

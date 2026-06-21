@@ -1,17 +1,17 @@
 const updates = [
   {
-    label: '正在做',
-    text: 'RAG 文档问答系统 · YC 个人 IP 网站 · AI Agent / Obsidian 知识库',
+    label: "正在做",
+    text: "YC IP · AI Agent / Obsidian 知识库 · 原子习惯",
   },
   {
-    label: '正在学',
-    text: 'AI automation · content strategy · visual storytelling',
+    label: "正在学",
+    text: "AI automation · Content Creation · Visual Storytelling",
   },
   {
-    label: '最近想说',
-    text: '认真生活不是慢，而是知道自己为什么往前走。',
+    label: "最近想说",
+    text: "认真生活 期待未来。 Love life.  Work Hard. Be kind.",
   },
-]
+];
 
 export default function Now() {
   return (
@@ -40,5 +40,5 @@ export default function Now() {
         </div>
       </div>
     </section>
-  )
+  );
 }

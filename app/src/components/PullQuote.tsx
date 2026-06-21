@@ -7,10 +7,12 @@ export default function PullQuote() {
       <div className="container">
         <div className="pullquote reveal">
           <p className="text-reveal">
-            把混乱的想法，变成<em>有价值的产品</em>。<br />
-            用音乐记录心情，用旋律表达爱。
+            把混乱的想法，变成<em>有价值的产品</em>。<br />用<em>内容</em>
+            记录心情，用<em>浪漫</em>表达爱。
           </p>
-          <span className="en">Keep creating. Keep shipping. Keep inspiring.</span>
+          <span className="en">
+            Keep creating. Keep shipping. Keep inspiring.
+          </span>
           <span className="sig">— YC</span>
           <span className="heart-deco" aria-hidden="true">
             ♥
@@ -18,5 +20,5 @@ export default function PullQuote() {
         </div>
       </div>
     </section>
-  )
+  );
 }

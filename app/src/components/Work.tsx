@@ -1,72 +1,91 @@
-import { useEffect, useState } from 'react'
-import { asset } from '../lib/asset'
+import { useEffect, useState } from "react";
+import { asset } from "../lib/asset";
 
 type FrameSequence = {
-  directory: string
-  frameCount: number
-  intervalMs: number
-  version: string
-}
+  directory: string;
+  frameCount: number;
+  intervalMs: number;
+  version: string;
+};
 
 type MotionPortraitProps = {
-  variant: 'ai' | 'design' | 'music' | 'read' | 'photo'
-  animatedSrc?: string
-  frameSequence?: FrameSequence
-  staticSrc: string
-  alt: string
-}
+  variant: "ai" | "design" | "music" | "read" | "photo";
+  animatedSrc?: string;
+  frameSequence?: FrameSequence;
+  staticSrc: string;
+  alt: string;
+};
 
-function MotionPortrait({ variant, animatedSrc, frameSequence, staticSrc, alt }: MotionPortraitProps) {
-  const [animationReady, setAnimationReady] = useState(false)
-  const [animationFailed, setAnimationFailed] = useState(false)
-  const [frameIndex, setFrameIndex] = useState(0)
+function MotionPortrait({
+  variant,
+  animatedSrc,
+  frameSequence,
+  staticSrc,
+  alt,
+}: MotionPortraitProps) {
+  const [animationReady, setAnimationReady] = useState(false);
+  const [animationFailed, setAnimationFailed] = useState(false);
+  const [frameIndex, setFrameIndex] = useState(0);
   const prefersReducedMotion =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const usesFrameSequence = Boolean(frameSequence) && !prefersReducedMotion
-  const shouldLoadAnimation = Boolean(animatedSrc) && !usesFrameSequence && !prefersReducedMotion && !animationFailed
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const usesFrameSequence = Boolean(frameSequence) && !prefersReducedMotion;
+  const shouldLoadAnimation =
+    Boolean(animatedSrc) &&
+    !usesFrameSequence &&
+    !prefersReducedMotion &&
+    !animationFailed;
   const currentFrameSrc =
     usesFrameSequence && frameSequence
-      ? `${frameSequence.directory}/frame_${String(frameIndex + 1).padStart(2, '0')}.png?v=${frameSequence.version}`
-      : staticSrc
+      ? `${frameSequence.directory}/frame_${String(frameIndex + 1).padStart(2, "0")}.png?v=${frameSequence.version}`
+      : staticSrc;
 
   useEffect(() => {
     if (!frameSequence || prefersReducedMotion) {
-      setFrameIndex(0)
-      return
+      setFrameIndex(0);
+      return;
     }
 
-    const frameSources = Array.from({ length: frameSequence.frameCount }, (_, index) =>
-      asset(`${frameSequence.directory}/frame_${String(index + 1).padStart(2, '0')}.png?v=${frameSequence.version}`),
-    )
+    const frameSources = Array.from(
+      { length: frameSequence.frameCount },
+      (_, index) =>
+        asset(
+          `${frameSequence.directory}/frame_${String(index + 1).padStart(2, "0")}.png?v=${frameSequence.version}`,
+        ),
+    );
     frameSources.forEach((source) => {
-      const frame = new Image()
-      frame.src = source
-    })
+      const frame = new Image();
+      frame.src = source;
+    });
 
     const timer = window.setInterval(() => {
-      setFrameIndex((current) => (current + 1) % frameSequence.frameCount)
-    }, frameSequence.intervalMs)
+      setFrameIndex((current) => (current + 1) % frameSequence.frameCount);
+    }, frameSequence.intervalMs);
 
-    return () => window.clearInterval(timer)
+    return () => window.clearInterval(timer);
   }, [
     frameSequence?.directory,
     frameSequence?.frameCount,
     frameSequence?.intervalMs,
     frameSequence?.version,
     prefersReducedMotion,
-  ])
+  ]);
 
   return (
     <button
       type="button"
       className={`motion-portrait motion-${variant}`}
       aria-label="放大查看角色动画"
-      data-frame-dir={frameSequence ? asset(frameSequence.directory) : undefined}
+      data-frame-dir={
+        frameSequence ? asset(frameSequence.directory) : undefined
+      }
       data-frame-count={frameSequence?.frameCount}
       data-frame-interval={frameSequence?.intervalMs}
       data-frame-version={frameSequence?.version}
     >
-      <div className={`motion-picture${animationReady ? ' animation-ready' : ''}${usesFrameSequence ? ' frame-sequence' : ''}`}>
+      <div
+        className={`motion-picture${animationReady ? " animation-ready" : ""}${usesFrameSequence ? " frame-sequence" : ""}`}
+      >
         {/* The reading scene advances through its PNG frames directly: this avoids browser-specific SVG image offsets. */}
         <img
           className="pillar-img motion-static"
@@ -78,7 +97,7 @@ function MotionPortrait({ variant, animatedSrc, frameSequence, staticSrc, alt }:
         />
         {shouldLoadAnimation && animatedSrc && (
           <img
-            className={`pillar-img motion-animation${animationReady ? ' is-ready' : ''}`}
+            className={`pillar-img motion-animation${animationReady ? " is-ready" : ""}`}
             src={asset(animatedSrc)}
             alt=""
             aria-hidden="true"
@@ -91,7 +110,7 @@ function MotionPortrait({ variant, animatedSrc, frameSequence, staticSrc, alt }:
         )}
       </div>
     </button>
-  )
+  );
 }
 
 export default function Work() {
@@ -100,9 +119,10 @@ export default function Work() {
       <div className="container">
         <div className="pillars-head reveal">
           <span className="sec-num">03</span>
-          <h2 className="sec-title serif">我主要分享什么</h2>
+          <h2 className="sec-title serif">主要分享</h2>
           <p className="sec-sub">
-            五个内容栏目，一种做事方式：<span className="deco">Romantic Engineering.</span>
+            五个内容，一种方式：
+            <span className="deco">Romantic Engineering.</span>
           </p>
           <p className="universe-line" aria-label="YC 的内容世界">
             <span>AI Lab</span>
@@ -144,8 +164,8 @@ export default function Work() {
               <path d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12Z" />
             </svg>
             <span className="emoji">💡</span>
-            <span className="en">Design My Own IP</span>
-            <h3>把想法做成我的表达</h3>
+            <span className="en">Design My Own</span>
+            <h3>把想法做成表达</h3>
             <div className="kw">
               <span>Visual Design</span>
               <span>Personal Brand</span>
@@ -168,6 +188,7 @@ export default function Work() {
               <span>Guitar</span>
               <span>Melody</span>
               <span>Mood</span>
+              <span>Rap</span>
             </div>
             <MotionPortrait
               variant="music"
@@ -180,10 +201,10 @@ export default function Work() {
             <MotionPortrait
               variant="read"
               frameSequence={{
-                directory: 'assets/animate_svg/img_4/frames',
+                directory: "assets/animate_svg/img_4/frames",
                 frameCount: 16,
                 intervalMs: 688,
-                version: '4',
+                version: "4",
               }}
               staticSrc="assets/animate_svg/img_4/frames/frame_01.png?v=4"
               alt="YC 坐在一摞书上专注阅读"
@@ -191,7 +212,7 @@ export default function Work() {
             <div className="p-body">
               <span className="emoji">📚</span>
               <span className="en">Books / Mind / Growth</span>
-              <h3>读书、思考，慢慢长成自己</h3>
+              <h3>读书，思考，慢慢长成自己</h3>
               <div className="kw">
                 <span>Books</span>
                 <span>Mind</span>
@@ -221,5 +242,5 @@ export default function Work() {
         </div>
       </div>
     </section>
-  )
+  );
 }

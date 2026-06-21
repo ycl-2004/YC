@@ -1,19 +1,19 @@
-import { sceneData } from '../data'
-import { asset } from '../lib/asset'
+import { sceneData } from "../data";
+import { asset } from "../lib/asset";
 
 export default function Scenes() {
   // Cards are rendered twice so the JS auto-scroll can loop seamlessly.
-  const cards = [...sceneData, ...sceneData]
+  const cards = [...sceneData, ...sceneData];
   return (
     <section className="scenes pad" id="scenes">
       <div className="container">
         <div className="scenes-head reveal">
           <div>
             <span className="sec-num">04</span>
-            <h2 className="sec-title serif">我的日常切片</h2>
+            <h2 className="sec-title serif">日常切片</h2>
           </div>
           <p className="sec-sub" style={{ margin: 0 }}>
-            同一个红发眼镜的 YC，出现在咖啡馆、音乐房、书店、城市与日落里。
+            同一个 YC 与城市的各个角落。
             <span className="deco">A day in YC's world.</span>
             <br />
             <span className="scene-hint">← 拖动浏览 · 点击放大 →</span>
@@ -23,7 +23,7 @@ export default function Scenes() {
       <div className="scene-row reveal reveal-d1" id="sceneRow">
         <div className="scene-track" id="sceneTrack">
           {cards.map((s, idx) => {
-            const i = idx % sceneData.length
+            const i = idx % sceneData.length;
             return (
               <figure className="scene-card" data-i={i} key={idx}>
                 <img
@@ -40,10 +40,10 @@ export default function Scenes() {
                   <span className="zh">{s[2]}</span>
                 </figcaption>
               </figure>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
