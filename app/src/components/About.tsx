@@ -55,7 +55,7 @@ const wardrobeClips = [
     sceneAlt: "一条有红色郁金香、单车与花藤拱门的约会小径",
     tags: ["温暖友善", "真诚投入", "浪漫主义者", "很会读人"],
     frameMs: 110,
-    frameHoldMultipliers: { 11: 3, 12: 4 },
+    frameHoldMultipliers: { 11: 3, 12: 4, 13: 3, 14: 3, 15: 3 },
   },
   {
     slug: "late-backpack-run",
