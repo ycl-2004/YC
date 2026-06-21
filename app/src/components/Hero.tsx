@@ -227,8 +227,8 @@ export default function Hero() {
             <b>认真生活，浪漫创作</b>
           </span>
           <span className="hero-intro-line">
-            用 AI、设计、音乐和文字，把生活慢慢做成<b>作品</b>，也
-            <b>和你相遇</b>。
+            用 AI、设计，音乐和文字，把生活画成<b>作品</b>，期待
+            <b>下次见妳</b>。
           </span>
         </p>
         <p className="hero-start">
