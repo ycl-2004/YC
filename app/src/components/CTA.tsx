@@ -19,8 +19,19 @@ const platforms = [
     description: "更近一点的近况与交流",
     wechatId: "y1chnlyn",
   },
-  { number: "04", label: "LinkedIn", description: "项目，职业思考，成长记录" },
+  {
+    number: "04",
+    label: "LinkedIn",
+    description: "项目，职业思考，成长记录",
+    href: "https://www.linkedin.com/in/yichenlin-lyc/",
+  },
   { number: "05", label: "抖音", description: "AI 实测，创作过程，日常短片" },
+  {
+    number: "06",
+    label: "Profile",
+    description: "个人主页 · 履历、项目与知识画布",
+    href: "https://ycl-2004.github.io/Profile/",
+  },
 ];
 
 export default function CTA() {
@@ -45,7 +56,7 @@ export default function CTA() {
         <h2 className="serif reveal">
           不同的地方，不同的 <em>YC</em>
         </h2>
-        <p className="lead reveal reveal-d1">---- 五种合适的相遇方式 ----</p>
+        <p className="lead reveal reveal-d1">---- 六种合适的相遇方式 ----</p>
         <ol
           className="social-map reveal reveal-d2"
           aria-label="YC 的社交媒体内容地图"

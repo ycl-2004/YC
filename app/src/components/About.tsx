@@ -448,6 +448,8 @@ export default function About() {
 
   return (
     <section className="about pad" id="about">
+      <div className="ambient" data-ambient="sparkle" aria-hidden="true"></div>
+      <div className="ambient" data-ambient="comet" aria-hidden="true"></div>
       <div className="container">
         <div className="about-grid">
           <div className="reveal">
@@ -480,7 +482,7 @@ export default function About() {
               }}
             >
               <p className="lbl script">
-                多面 <b>YC</b>；，都是我 →
+                多面 <b>YC</b> 都是我 →
               </p>
               <WardrobeStage
                 clip={activeClip}

@@ -292,17 +292,34 @@ export function initEffects(): void {
   if (!reduce && window.matchMedia('(hover:hover)').matches) {
     const dot = document.querySelector('.cursor-dot') as HTMLElement | null
     if (dot) {
-      let active = false
+      document.body.classList.add('has-cursor-dot') // hide the native arrow
+      let lx = 0
+      let ly = 0
       document.addEventListener('mousemove', (e) => {
         dot.style.left = e.clientX + 'px'
         dot.style.top = e.clientY + 'px'
-        if (!active) {
-          active = true
-          dot.style.opacity = '1'
+        // light it up on every move — never gate this behind a one-shot flag, or
+        // a prior mouseleave would leave the dot dark while the pointer is back.
+        dot.style.opacity = '1'
+        // sparse, faint stardust trail — only every ~26px of travel
+        const dx = e.clientX - lx
+        const dy = e.clientY - ly
+        if (dx * dx + dy * dy > 26 * 26) {
+          lx = e.clientX
+          ly = e.clientY
+          const t = document.createElement('span')
+          t.className = 'cursor-trail'
+          t.style.left = e.clientX + 'px'
+          t.style.top = e.clientY + 'px'
+          document.body.appendChild(t)
+          setTimeout(() => t.remove(), 700)
         }
       })
       document.addEventListener('mouseleave', () => {
         dot.style.opacity = '0'
+      })
+      document.addEventListener('mouseenter', () => {
+        dot.style.opacity = '1'
       })
       document.querySelectorAll('a,button,.trait,.pillar,.scene-card,.ward-clip').forEach((el) => {
         el.addEventListener('mouseenter', () => dot.classList.add('grow'))
@@ -336,6 +353,116 @@ export function initEffects(): void {
       })
       el.addEventListener('mouseleave', () => {
         el.style.transform = ''
+      })
+    })
+    // YC chibi leans toward the cursor (A2). The offsets feed bob's keyframe
+    // vars (--yc-tx/ty/rot) so the idle float and the follow stack cleanly.
+    const stage = document.getElementById('figStage')
+    const hero = document.querySelector('.hero') as HTMLElement | null
+    if (stage && hero) {
+      const clamp = (v: number) => Math.max(-1, Math.min(1, v))
+      hero.addEventListener('mousemove', (e) => {
+        const r = stage.getBoundingClientRect()
+        const dx = clamp((e.clientX - (r.left + r.width / 2)) / (r.width / 2))
+        const dy = clamp((e.clientY - (r.top + r.height / 2)) / (r.height / 2))
+        stage.style.setProperty('--yc-tx', (dx * 10).toFixed(1) + 'px')
+        stage.style.setProperty('--yc-ty', (dy * 7).toFixed(1) + 'px')
+        stage.style.setProperty('--yc-rot', (dx * 5).toFixed(2) + 'deg')
+      })
+      hero.addEventListener('mouseleave', () => {
+        stage.style.setProperty('--yc-tx', '0px')
+        stage.style.setProperty('--yc-ty', '0px')
+        stage.style.setProperty('--yc-rot', '0deg')
+      })
+    }
+  }
+
+  /* ---- hidden YC easter eggs: click the giant decorative marks to find a
+     sticker that has never shown its face; progress persists in localStorage. ---- */
+  if (!reduce) {
+    const eggs = [
+      { sel: '.hero-name, .hero-bgword', img: 'assets/stickers/v-peace.png', note: '找到我啦～' },
+      { sel: '.pq-bgword', img: 'assets/stickers/v-guitar.png', note: '创作中…' },
+      { sel: '.foot-brand', img: 'assets/stickers/v-teddy.png', note: '晚安 🌙' },
+    ]
+    const KEY = 'yc-eggs-found'
+    let found: Set<string>
+    try {
+      found = new Set<string>(JSON.parse(localStorage.getItem(KEY) || '[]'))
+    } catch {
+      found = new Set<string>()
+    }
+    let live = false // only one reveal on screen at a time
+    const dotEl = document.querySelector('.cursor-dot') as HTMLElement | null
+    const CONFETTI = ['#e8657a', '#5b8cd1', '#f4b740', '#5E8C68', '#b23a48']
+
+    const burst = () => {
+      const box = document.createElement('div')
+      box.className = 'egg-confetti'
+      box.setAttribute('aria-hidden', 'true')
+      for (let i = 0; i < 18; i++) {
+        const p = document.createElement('i')
+        const ang = (i / 18) * Math.PI * 2
+        const dist = 90 + Math.random() * 100
+        p.style.setProperty('--tx', (Math.cos(ang) * dist).toFixed(0) + 'px')
+        p.style.setProperty('--ty', (Math.sin(ang) * dist).toFixed(0) + 'px')
+        p.style.setProperty('--r', (Math.random() * 540).toFixed(0) + 'deg')
+        p.style.setProperty('--c', CONFETTI[i % CONFETTI.length])
+        p.style.animationDelay = (Math.random() * 0.1).toFixed(2) + 's'
+        box.appendChild(p)
+      }
+      document.body.appendChild(box)
+      setTimeout(() => box.remove(), 1600)
+    }
+
+    const reveal = (img: string, note: string, isNew: boolean, n: number) => {
+      const sub = !isNew
+        ? '这个你已经找过啦'
+        : n >= eggs.length
+          ? `全部找齐 ✦ ${n}/${eggs.length} · 你很懂 YC`
+          : `已找到 ${n}/${eggs.length} 个隐藏的 YC`
+      const veil = document.createElement('div')
+      veil.className = 'egg-veil'
+      veil.setAttribute('aria-hidden', 'true')
+      const pop = document.createElement('div')
+      pop.className = 'egg-pop'
+      pop.setAttribute('role', 'status')
+      pop.innerHTML =
+        `<span class="egg-glow" aria-hidden="true"></span>` +
+        `<img class="egg-img" src="${asset(img)}" alt="">` +
+        `<span class="egg-cap">🎉 <b>${note}</b><span class="sub">${sub}</span></span>`
+      document.body.appendChild(veil)
+      document.body.appendChild(pop)
+      burst()
+      requestAnimationFrame(() => pop.classList.add('show'))
+      setTimeout(() => {
+        veil.remove()
+        pop.remove()
+        live = false
+      }, 2800)
+    }
+
+    eggs.forEach(({ sel, img, note }) => {
+      document.querySelectorAll<HTMLElement>(sel).forEach((hot) => {
+        hot.style.pointerEvents = 'auto'
+        hot.classList.add('egg-hot')
+        // the native '?' cursor is hidden, so hint via the custom glow dot instead
+        hot.addEventListener('mouseenter', () => dotEl?.classList.add('hint'))
+        hot.addEventListener('mouseleave', () => dotEl?.classList.remove('hint'))
+        hot.addEventListener('click', () => {
+          if (live) return
+          live = true
+          const isNew = !found.has(sel)
+          if (isNew) {
+            found.add(sel)
+            try {
+              localStorage.setItem(KEY, JSON.stringify([...found]))
+            } catch {
+              /* private mode — discovery just won't persist */
+            }
+          }
+          reveal(img, note, isNew, found.size)
+        })
       })
     })
   }
@@ -481,6 +608,96 @@ export function initEffects(): void {
       mt.style.animationDelay = (Math.random() * 6).toFixed(2) + 's'
       meteorBox.appendChild(mt)
     }
+  }
+
+  /* ---- warm dust motes (drift over the light cream sections) ---- */
+  if (!reduce) {
+    const dust = document.createElement('div')
+    dust.className = 'dust'
+    dust.setAttribute('aria-hidden', 'true')
+    for (let d = 0; d < 26; d++) {
+      const mote = document.createElement('span')
+      mote.className = 'mote'
+      const size = (2 + Math.random() * 4).toFixed(1)
+      mote.style.width = size + 'px'
+      mote.style.height = size + 'px'
+      mote.style.left = (Math.random() * 100).toFixed(2) + '%'
+      mote.style.top = (Math.random() * 100).toFixed(2) + '%'
+      mote.style.animationDuration = (16 + Math.random() * 18).toFixed(1) + 's'
+      // negative delay so motes are mid-flight on load, not all starting together
+      mote.style.animationDelay = (-Math.random() * 30).toFixed(1) + 's'
+      dust.appendChild(mote)
+    }
+    document.body.appendChild(dust)
+  }
+
+  /* ---- per-section ambient fields (visible warm cousins of the meteors) ---- */
+  if (!reduce) {
+    const rnd = (a: number, b: number) => a + Math.random() * (b - a)
+    document.querySelectorAll<HTMLElement>('[data-ambient]').forEach((box) => {
+      const type = box.dataset.ambient
+      const spawn = (cls: string, n: number, style: (el: HTMLElement) => void) => {
+        for (let i = 0; i < n; i++) {
+          const el = document.createElement('span')
+          el.className = cls
+          style(el)
+          box.appendChild(el)
+        }
+      }
+      if (type === 'glow') {
+        spawn('amb-glow', 6, (el) => {
+          const s = rnd(220, 420)
+          el.style.width = el.style.height = s + 'px'
+          el.style.left = rnd(-12, 84) + '%'
+          el.style.top = rnd(-14, 66) + '%'
+          el.style.animationDuration = rnd(22, 38).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 20)).toFixed(1) + 's'
+        })
+      } else if (type === 'sparkle') {
+        spawn('amb-sparkle', 24, (el) => {
+          const s = rnd(5, 12)
+          el.style.width = el.style.height = s + 'px'
+          el.style.left = rnd(0, 100) + '%'
+          el.style.top = rnd(0, 100) + '%'
+          el.style.animationDuration = rnd(3.4, 7).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 7)).toFixed(1) + 's'
+        })
+      } else if (type === 'bubble') {
+        spawn('amb-bubble', 18, (el) => {
+          const s = rnd(8, 26)
+          el.style.width = el.style.height = s + 'px'
+          el.style.left = rnd(0, 100) + '%'
+          el.style.animationDuration = rnd(12, 22).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 18)).toFixed(1) + 's'
+        })
+      } else if (type === 'petal') {
+        spawn('amb-petal', 16, (el) => {
+          const w = rnd(8, 16)
+          el.style.width = w + 'px'
+          el.style.height = (w * 0.9).toFixed(1) + 'px'
+          el.style.left = rnd(0, 100) + '%'
+          el.style.animationDuration = rnd(9, 16).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 14)).toFixed(1) + 's'
+        })
+      } else if (type === 'comet') {
+        // sparse warm shooting stars launched from the upper-left sky zone
+        spawn('amb-comet', 6, (el) => {
+          el.style.left = rnd(-6, 70) + '%'
+          el.style.top = rnd(-8, 26) + '%'
+          el.style.animationDuration = rnd(3.4, 6).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 9)).toFixed(1) + 's'
+        })
+      } else if (type === 'firefly') {
+        spawn('amb-firefly', 20, (el) => {
+          const s = rnd(4, 9)
+          el.style.width = el.style.height = s + 'px'
+          el.style.left = rnd(0, 100) + '%'
+          el.style.top = rnd(0, 100) + '%'
+          el.style.animationDuration = rnd(4, 8).toFixed(1) + 's'
+          el.style.animationDelay = (-rnd(0, 8)).toFixed(1) + 's'
+        })
+      }
+    })
   }
 
   /* ---- text reveal: wrap words, light them up on scroll ---- */

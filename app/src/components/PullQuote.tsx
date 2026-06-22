@@ -1,6 +1,8 @@
 export default function PullQuote() {
   return (
     <section className="pq-wrap pad">
+      <div className="ambient" data-ambient="glow" aria-hidden="true"></div>
+      <div className="ambient" data-ambient="sparkle" aria-hidden="true"></div>
       <span className="pq-bgword" data-parallax="0.3" aria-hidden="true">
         create
       </span>

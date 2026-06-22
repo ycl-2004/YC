@@ -16,6 +16,7 @@ const updates = [
 export default function Now() {
   return (
     <section className="now" id="now" aria-labelledby="now-title">
+      <div className="ambient" data-ambient="firefly" aria-hidden="true"></div>
       <div className="container">
         <div className="now-note reveal">
           <div className="now-intro">

@@ -23,6 +23,129 @@ body::before{
     radial-gradient(circle at 1px 1px, rgba(26,26,46,.04) 1px, transparent 0);
   background-size:26px 26px;
 }
+/* film grain — analog hand-made texture over the whole canvas (static, cheap) */
+body::after{
+  content:''; position:fixed; inset:0; z-index:50; pointer-events:none;
+  opacity:.06; mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px 160px;
+}
+
+/* ---- warm dust motes (sunlit dust over the cream sections) ---- */
+.dust{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  -webkit-mask:radial-gradient(ellipse 70% 64% at 50% 46%, transparent 26%, #000 84%);
+  mask:radial-gradient(ellipse 70% 64% at 50% 46%, transparent 26%, #000 84%);}
+.mote{position:absolute; border-radius:50%; opacity:0; filter:blur(.4px); will-change:transform,opacity;
+  background:radial-gradient(circle, rgba(214,166,104,.6), rgba(214,166,104,0) 70%);
+  animation:moteFloat linear infinite;}
+.mote:nth-child(3n){background:radial-gradient(circle, rgba(203,90,120,.42), rgba(203,90,120,0) 70%);}
+.mote:nth-child(5n){background:radial-gradient(circle, rgba(244,224,180,.7), rgba(244,224,180,0) 70%);}
+@keyframes moteFloat{
+  0%{transform:translate(0,24px) scale(.9); opacity:0;}
+  15%{opacity:.85;}
+  55%{transform:translate(12px,-42px) scale(1); opacity:.6;}
+  85%{opacity:.7;}
+  100%{transform:translate(-8px,-128px) scale(.92); opacity:0;}
+}
+@media(prefers-reduced-motion:reduce){.dust{display:none;}}
+
+/* ---- per-section ambient fields (visible warm cousins of the meteors) ---- */
+.ambient{position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;
+  /* focal收束: particles live around the edges; the central reading zone (and YC) stays clean */
+  -webkit-mask:radial-gradient(ellipse 66% 60% at 50% 46%, transparent 32%, #000 82%);
+  mask:radial-gradient(ellipse 66% 60% at 50% 46%, transparent 32%, #000 82%);}
+
+/* aurora glow orbs — soft, slow, dreamy (引言 / 柔光区) */
+.amb-glow{position:absolute; border-radius:50%; filter:blur(58px); opacity:.55;
+  background:radial-gradient(circle, rgba(178,58,72,.5), rgba(178,58,72,0) 70%);
+  animation:ambGlow ease-in-out infinite alternate;}
+.amb-glow:nth-child(2n){background:radial-gradient(circle, rgba(59,110,165,.45), rgba(59,110,165,0) 70%);}
+.amb-glow:nth-child(3n){background:radial-gradient(circle, rgba(203,90,120,.42), rgba(203,90,120,0) 70%);}
+@keyframes ambGlow{from{transform:translate(0,0) scale(1);}to{transform:translate(34px,-26px) scale(1.14);}}
+
+/* twinkling sparkles — daytime cousin of the meteors (关于我) */
+.amb-sparkle{position:absolute; background:var(--wine); opacity:0;
+  clip-path:polygon(50% 0,58% 42%,100% 50%,58% 58%,50% 100%,42% 58%,0 50%,42% 42%);
+  animation:ambTwinkle ease-in-out infinite;}
+.amb-sparkle:nth-child(2n){background:var(--denim);}
+.amb-sparkle:nth-child(3n){background:var(--blush);}
+@keyframes ambTwinkle{0%,100%{opacity:0; transform:scale(.3) rotate(0deg);}50%{opacity:.9; transform:scale(1) rotate(45deg);}}
+
+/* rising bubbles (最近) */
+.amb-bubble{position:absolute; bottom:-10%; border-radius:50%; opacity:0;
+  border:1px solid rgba(59,110,165,.28);
+  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.6), rgba(157,189,224,.2) 58%, transparent 72%);
+  animation:ambBubble linear infinite;}
+.amb-bubble:nth-child(3n){border-color:rgba(203,90,120,.28);
+  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.6), rgba(203,90,120,.18) 58%, transparent 72%);}
+@keyframes ambBubble{0%{transform:translate(0,0); opacity:0;}12%{opacity:.7;}88%{opacity:.55;}100%{transform:translate(18px,-104vh); opacity:0;}}
+
+/* drifting petals (创作) */
+.amb-petal{position:absolute; top:-8%; border-radius:50% 0 50% 50%; opacity:0;
+  background:linear-gradient(135deg, rgba(203,90,120,.6), rgba(178,58,72,.42));
+  animation:ambPetal linear infinite;}
+.amb-petal:nth-child(2n){background:linear-gradient(135deg, rgba(157,189,224,.55), rgba(59,110,165,.4));}
+@keyframes ambPetal{0%{transform:translate(0,0) rotate(0deg); opacity:0;}12%{opacity:.75;}100%{transform:translate(46px,108vh) rotate(460deg); opacity:0;}}
+
+/* warm daytime shooting stars — the beloved meteor, recoloured & sparse (关于我) */
+.amb-comet{position:absolute; top:-6%; width:2px; height:2px; border-radius:50%; opacity:0;
+  color:var(--wine); background:currentColor; box-shadow:0 0 7px 1px currentColor;
+  animation:ambComet linear infinite;}
+.amb-comet:nth-child(2n){color:var(--denim);}
+.amb-comet:nth-child(3n){color:#D6A668;}
+.amb-comet::before{content:''; position:absolute; top:50%; left:0; width:56px; height:1px;
+  transform:translateY(-50%); background:linear-gradient(90deg, currentColor, transparent);}
+/* mirror of the Values meteors: travels down-RIGHT from the upper-left */
+@keyframes ambComet{0%{transform:translate(0,0) rotate(-35deg); opacity:0;}
+  9%{opacity:.85;}70%{opacity:.8;}100%{transform:translate(300px,300px) rotate(-35deg); opacity:0;}}
+
+/* drifting fireflies — breathing glow dots that live in the margins (最近) */
+.amb-firefly{position:absolute; border-radius:50%; opacity:0; will-change:transform,opacity;
+  background:radial-gradient(circle, rgba(214,166,104,.95), rgba(214,166,104,0) 70%);
+  box-shadow:0 0 9px 2px rgba(214,166,104,.4);
+  animation:ambFirefly ease-in-out infinite;}
+.amb-firefly:nth-child(2n){background:radial-gradient(circle, rgba(203,90,120,.85), rgba(203,90,120,0) 70%); box-shadow:0 0 9px 2px rgba(203,90,120,.35);}
+.amb-firefly:nth-child(3n){background:radial-gradient(circle, rgba(94,140,104,.85), rgba(94,140,104,0) 70%); box-shadow:0 0 9px 2px rgba(94,140,104,.3);}
+@keyframes ambFirefly{0%,100%{opacity:0; transform:translate(0,0);}20%{opacity:.9;}50%{opacity:.45; transform:translate(14px,-22px);}80%{opacity:.85;}}
+/* fireflies float in front of the Now card and spread across the whole section */
+.now .ambient{z-index:3; -webkit-mask:none; mask:none;}
+
+@media(prefers-reduced-motion:reduce){.ambient{display:none;}}
+
+/* ---- hidden YC easter eggs — a clear, celebratory centre-stage reveal ---- */
+.egg-veil{position:fixed; inset:0; z-index:9990; pointer-events:none; opacity:0;
+  background:radial-gradient(circle at 50% 46%, rgba(254,252,246,.55), rgba(142,44,58,.16));
+  animation:eggVeil 2.8s ease forwards;}
+@keyframes eggVeil{0%{opacity:0;}10%,72%{opacity:1;}100%{opacity:0;}}
+
+.egg-pop{position:fixed; left:50%; top:46%; z-index:9992; pointer-events:none; opacity:0;
+  display:grid; justify-items:center; text-align:center; transform:translate(-50%,-50%);}
+.egg-pop.show{animation:eggPop 2.8s cubic-bezier(.2,.85,.3,1) forwards;}
+.egg-pop .egg-glow{grid-area:1/1; width:min(360px,64vw); height:min(360px,64vw); border-radius:50%;
+  background:radial-gradient(circle, rgba(203,90,120,.5), rgba(178,58,72,0) 66%); filter:blur(8px); animation:eggGlowPulse 2.8s ease;}
+.egg-pop .egg-img{grid-area:1/1; align-self:center; justify-self:center; width:min(260px,46vw);
+  filter:drop-shadow(0 24px 42px rgba(26,26,46,.3)); animation:eggFloat 2.8s ease-in-out;}
+.egg-pop .egg-cap{grid-area:2/1; margin-top:14px; font-family:'Huiwen Mincho','Noto Serif SC',serif;
+  font-size:clamp(1.05rem,2.4vw,1.5rem); color:var(--wine-deep);}
+.egg-pop .egg-cap b{font-family:'Fraunces',serif; font-style:italic; color:var(--wine);}
+.egg-pop .egg-cap .sub{display:block; margin-top:5px; font-size:.84rem; font-style:italic; color:var(--ink-muted);}
+@keyframes eggPop{0%{opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-6deg);}
+  12%{opacity:1; transform:translate(-50%,-50%) scale(1.08) rotate(2deg);}
+  22%{transform:translate(-50%,-50%) scale(1) rotate(0);}
+  78%{opacity:1; transform:translate(-50%,-50%) scale(1);}
+  100%{opacity:0; transform:translate(-50%,-50%) scale(.92);}}
+@keyframes eggFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+@keyframes eggGlowPulse{0%{opacity:0; transform:scale(.6);}24%{opacity:.9; transform:scale(1);}100%{opacity:0; transform:scale(1.12);}}
+
+/* confetti burst around the reveal */
+.egg-confetti{position:fixed; left:50%; top:46%; z-index:9991; pointer-events:none; width:0; height:0;}
+.egg-confetti i{position:absolute; left:0; top:0; width:9px; height:9px; border-radius:2px; opacity:0;
+  background:var(--c,#e8657a); animation:eggConfetti 1.4s ease-out forwards;}
+@keyframes eggConfetti{0%{opacity:1; transform:translate(0,0) rotate(0) scale(1);}
+  100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--r)) scale(.4);}}
+
+.egg-hot{cursor:help;}
+@media(prefers-reduced-motion:reduce){.egg-veil,.egg-pop,.egg-confetti{display:none;}}
 ::selection{background:var(--denim-soft); color:var(--ink);}
 a{color:inherit; text-decoration:none;}
 img{display:block; max-width:100%;}
@@ -45,13 +168,31 @@ section{position:relative;}
 /* ============ custom cursor ============ */
 /* soft glowing dot cursor — small solid dot + soft halo, gentle pulse on hover (no ring) */
 .cursor-dot{position:fixed; top:0; left:0; z-index:10000; pointer-events:none; border-radius:50%;
-  width:10px; height:10px; background:var(--wine); transform:translate(-50%,-50%); opacity:0;
-  box-shadow:0 0 0 4px rgba(178,58,72,.12), 0 0 14px 3px rgba(203,90,120,.5);
-  transition:opacity .3s, box-shadow .3s, background .3s;}
-.cursor-dot.grow{background:var(--blush-deep);
-  box-shadow:0 0 0 5px rgba(203,90,120,.16), 0 0 20px 5px rgba(203,90,120,.6);
+  width:16px; height:16px; transform:translate(-50%,-50%); opacity:0;
+  /* soft feathered glow rather than a hard solid dot */
+  background:radial-gradient(circle, rgba(203,90,120,.5), rgba(203,90,120,.16) 55%, transparent 74%);
+  box-shadow:0 0 12px 4px rgba(203,90,120,.18);
+  transition:opacity .3s, box-shadow .3s, background .3s, width .25s, height .25s;}
+.cursor-dot.grow{width:22px; height:22px;
+  background:radial-gradient(circle, rgba(178,58,72,.42), rgba(203,90,120,.16) 55%, transparent 76%);
+  box-shadow:0 0 18px 6px rgba(203,90,120,.22);
   animation:cursorpulse 1.2s ease-in-out infinite;}
 @keyframes cursorpulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.28);}}
+/* hint state: over a hidden-egg hotspot the glow dot grows a ring + a "?" */
+.cursor-dot.hint{width:28px; height:28px;
+  background:radial-gradient(circle, rgba(178,58,72,.26), rgba(203,90,120,.1) 55%, transparent 76%);
+  box-shadow:0 0 0 2px rgba(178,58,72,.45), 0 0 16px 5px rgba(203,90,120,.25);
+  animation:cursorpulse 1.2s ease-in-out infinite;}
+.cursor-dot.hint::after{content:'?'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  font-family:'Fraunces',serif; font-style:italic; font-weight:700; font-size:15px; color:var(--wine); line-height:1;}
+/* when the glow dot is active, hide the native arrow so only the dot leads */
+.has-cursor-dot, .has-cursor-dot *{cursor:none !important;}
+/* very light stardust trail left behind the dot as it moves */
+.cursor-trail{position:fixed; top:0; left:0; z-index:9999; pointer-events:none; border-radius:50%;
+  width:8px; height:8px; transform:translate(-50%,-50%); will-change:transform,opacity;
+  background:radial-gradient(circle, rgba(203,90,120,.4), rgba(203,90,120,0) 70%);
+  animation:cursorTrail .7s ease-out forwards;}
+@keyframes cursorTrail{0%{opacity:.5; transform:translate(-50%,-50%) scale(1);}100%{opacity:0; transform:translate(-50%,-50%) scale(.3);}}
 @media (hover:none),(pointer:coarse){.cursor-dot{display:none;}}
 
 /* ============ scroll progress ============ */
@@ -163,7 +304,10 @@ section{position:relative;}
 .fig-disc{position:absolute; inset:14%; border-radius:50%;
   background:radial-gradient(circle at 50% 38%,#fff,var(--cream-deep)); box-shadow:0 24px 60px rgba(178,58,72,.16), inset 0 0 0 1px rgba(178,58,72,.08);}
 @keyframes spin{to{transform:rotate(360deg);}}
-.fig-figure{position:absolute; left:50%; bottom:9%; transform:translateX(-50%); width:74%; z-index:2;
+/* --yc-tx/ty/rot are set live on the figure-stage as the cursor moves; the bob
+   keyframes fold them in so the float and the cursor-follow coexist (A2). */
+.fig-figure{position:absolute; left:50%; bottom:9%; width:74%; z-index:2;
+  transform:translateX(-50%); /* base centering; bob keyframes restate it while running */
   padding:0; border:0; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent;
   animation:bob 6s ease-in-out infinite; transition:filter .25s ease;}
 .fig-figure:hover{filter:brightness(1.03);}
@@ -171,7 +315,10 @@ section{position:relative;}
 .fig-figure:active .fig-img{transform:scale(.97);}
 .fig-figure:focus-visible{outline:none;}
 .fig-figure:focus-visible .fig-img{filter:drop-shadow(0 0 0 3px var(--accent)) drop-shadow(0 18px 24px rgba(26,26,46,.14));}
-@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-12px);}}
+@keyframes bob{
+  0%,100%{transform:translateX(-50%) translate(var(--yc-tx,0px),var(--yc-ty,0px)) translateY(0) rotate(var(--yc-rot,0deg));}
+  50%{transform:translateX(-50%) translate(var(--yc-tx,0px),var(--yc-ty,0px)) translateY(-12px) rotate(var(--yc-rot,0deg));}
+}
 .fig-img{display:block; width:100%; transform-origin:50% 90%;
   filter:drop-shadow(0 18px 24px rgba(26,26,46,.14)); transition:transform .25s cubic-bezier(.34,1.56,.64,1);}
 /* ---- per-pose entrance animations (set via .enter-* on the swapped img) ---- */
@@ -510,7 +657,16 @@ section{position:relative;}
 .pq-wrap{background:var(--cream-deep); position:relative; overflow:hidden;}
 .pq-bgword{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:clamp(6rem,20vw,18rem); line-height:.8;
-  color:var(--wine); opacity:.05; white-space:nowrap; pointer-events:none; user-select:none; z-index:0;}
+  white-space:nowrap; pointer-events:none; user-select:none; z-index:0; opacity:.1;
+  /* flowing brand gradient clipped to the word; only opacity/bg-position animate
+     (transform is owned by the parallax handler, so we never touch it here) */
+  background:linear-gradient(110deg, var(--wine), var(--blush), var(--denim), var(--wine));
+  background-size:300% 100%;
+  -webkit-background-clip:text; background-clip:text;
+  -webkit-text-fill-color:transparent; color:transparent;
+  animation:pqShimmer 16s linear infinite, pqBreath 9s ease-in-out infinite;}
+@keyframes pqShimmer{to{background-position:300% 50%;}}
+@keyframes pqBreath{0%,100%{opacity:.07;}50%{opacity:.16;}}
 .pullquote{position:relative; max-width:800px; margin:0 auto; padding:clamp(38px,5vw,58px) clamp(28px,4vw,58px);
   background:var(--cream); border-radius:22px; border:2px solid var(--denim); z-index:2;}
 .pullquote::before{content:'\201C'; font-family:'Fraunces',serif; font-size:6rem; line-height:1; color:var(--denim);
@@ -540,7 +696,7 @@ section{position:relative;}
 .social-map strong a{color:inherit; text-decoration:none; border-bottom:1px solid transparent; transition:color .2s,border-color .2s;}
 .social-map strong a:hover,.social-map strong a:focus-visible{color:var(--wine); border-bottom-color:currentColor; outline:none;}
 .social-map li > span:last-child{color:var(--ink-muted); font-size:.9rem;}
-.wechat-copy{display:block; width:max-content; margin-top:4px; padding:0; color:var(--denim); background:transparent; border:0; border-bottom:1px solid rgba(59,110,165,.35); font:inherit; font-size:.78rem; line-height:1.45; cursor:pointer;}
+.wechat-copy{display:inline-block; width:auto; margin:0 0 0 8px; padding:0; vertical-align:baseline; color:var(--denim); background:transparent; border:0; border-bottom:1px solid rgba(59,110,165,.35); font:inherit; font-size:.78rem; line-height:1.45; cursor:pointer;}
 .wechat-copy:hover,.wechat-copy:focus-visible{color:var(--wine); border-bottom-color:currentColor; outline:none;}
 .collab-note{max-width:760px; margin:0 auto 1.9rem; padding:16px 0; border-top:1px dashed rgba(59,110,165,.34); border-bottom:1px dashed rgba(59,110,165,.34); color:var(--ink-muted);}
 .collab-note > span{display:block; color:var(--denim); font-size:1rem; margin-bottom:3px;}
@@ -555,19 +711,63 @@ section{position:relative;}
   filter:drop-shadow(0 12px 18px rgba(26,26,46,.12)); animation:bob 6s ease-in-out infinite;}
 .sr-status{position:fixed; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap;}
 
-/* ============ footer ============ */
-footer{background:var(--wine-deep); color:rgba(255,255,255,.78); padding:46px 2rem 38px; text-align:center; font-size:.86rem; line-height:1.85; position:relative; z-index:2;}
-.foot-inner{display:flex; align-items:center; justify-content:center; gap:22px; flex-wrap:wrap; margin-bottom:18px;}
-.foot-brand{display:flex; align-items:center; gap:10px;}
-.foot-mark{width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,.14); color:#fff; display:grid; place-items:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; border:1px solid rgba(255,255,255,.25);}
-footer .deco{font-family:'Fraunces',serif; font-style:italic; color:#fff; opacity:.95; font-size:1.05rem;}
-.foot-links{display:flex; gap:4px; flex-wrap:wrap; justify-content:center;}
-.foot-links a{padding:5px 12px; border-radius:8px; color:rgba(255,255,255,.82); font-size:.88rem; font-weight:500; transition:background .2s,color .2s;}
-.foot-links a:hover{background:rgba(255,255,255,.12); color:#fff;}
-.foot-meta{max-width:780px; margin:0 auto; border-top:1px solid rgba(255,255,255,.14); padding-top:16px;}
-.foot-fine{font-size:.72rem; opacity:.62; line-height:1.7; margin-top:6px;}
-footer .totop{display:inline-block; margin-top:16px; color:#fff; opacity:.85; font-size:.82rem; border-bottom:1px solid rgba(255,255,255,.3);}
-footer .totop:hover{opacity:1;}
+/* ============ footer (brand left / social right · main + legal rows) ============ */
+.site-footer{background:var(--wine-deep); color:rgba(255,255,255,.78); position:relative; z-index:2; font-size:.88rem; line-height:1.8;}
+.foot-wrap{max-width:var(--maxw); margin:0 auto; padding:42px 2rem 26px;}
+.foot-top{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px 20px;}
+.foot-top .foot-brand{justify-self:start;}
+.foot-top .foot-social{justify-self:end;}
+.foot-brand{display:flex; align-items:center; gap:12px; color:#fff;}
+.foot-mark{width:40px; height:40px; border-radius:50%; background:rgba(255,255,255,.14); color:#fff; display:grid; place-items:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:1.05rem; border:1px solid rgba(255,255,255,.25);}
+.foot-brandname{font-family:'Fraunces',serif; font-style:italic; font-size:1.15rem; color:#fff;}
+.foot-brandname em{margin:0 .4em; opacity:.55; font-style:normal;}
+.foot-social{display:flex; gap:12px; list-style:none; margin:0; padding:0;}
+.foot-social-btn{width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.18); transition:background .2s,border-color .2s,transform .2s;}
+.foot-social-btn svg{width:19px; height:19px;}
+.foot-social-btn:hover{background:rgba(255,255,255,.22); border-color:rgba(255,255,255,.4); transform:translateY(-2px);}
+.foot-grid{margin-top:22px; padding-top:20px; border-top:1px solid rgba(255,255,255,.16); display:grid; grid-template-columns:1fr; gap:14px;}
+.foot-main ul,.foot-legal ul{display:flex; flex-wrap:wrap; gap:6px 2px; list-style:none; margin:0; padding:0;}
+.foot-main a{padding:5px 12px; border-radius:8px; color:rgba(255,255,255,.85); font-weight:500; transition:background .2s,color .2s;}
+.foot-main a:hover{background:rgba(255,255,255,.12); color:#fff;}
+.foot-legal a{padding:5px 12px; color:rgba(255,255,255,.6); font-size:.82rem; transition:color .2s;}
+.foot-legal a:hover{color:#fff; text-decoration:underline; text-underline-offset:3px;}
+.foot-copy .foot-tagline{font-family:'Fraunces',serif; font-style:italic; color:#fff; font-size:.95rem; margin:0 0 6px;}
+.foot-copy p{margin:0 0 3px;}
+.foot-fine{font-size:.72rem; opacity:.6; line-height:1.65; margin-top:6px;}
+.foot-totop{justify-self:center; margin:0; color:#fff; opacity:.8; font-size:.82rem; white-space:nowrap; border-bottom:1px solid rgba(255,255,255,.3); transition:opacity .2s;}
+.foot-totop:hover{opacity:1;}
+@media(min-width:820px){
+  .foot-grid{grid-template-columns:1fr auto; align-items:start;}
+  .foot-main,.foot-legal{grid-column:2; justify-self:end;}
+  .foot-main ul,.foot-legal ul{justify-content:flex-end;}
+  .foot-copy{grid-column:1; grid-row:1 / span 2; max-width:64ch;}
+  .foot-copy .foot-tagline{white-space:nowrap;}
+}
+@media(max-width:600px){
+  .foot-wrap{padding:36px 1.5rem 24px;}
+  .foot-top{grid-template-columns:1fr; justify-items:start; gap:16px;}
+  .foot-top .foot-brand,.foot-top .foot-social{justify-self:start;}
+  .foot-totop{justify-self:center;}
+}
+
+/* ============ legal pages (/privacy · /terms) ============ */
+.legal-page{background:var(--cream); color:var(--ink); min-height:100vh; display:flex; flex-direction:column;}
+.legal-topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; max-width:var(--maxw); width:100%; margin:0 auto; padding:22px 2rem;}
+.legal-topbar .brand{display:flex; align-items:center; gap:10px;}
+.legal-topbar .brand .mk{width:36px; height:36px; border-radius:50%; background:var(--wine); color:#fff; display:grid; place-items:center; font-family:'Fraunces',serif; font-style:italic; font-weight:600; font-size:.95rem;}
+.legal-back{color:var(--wine); font-weight:500; font-size:.92rem; border-bottom:1px solid transparent; transition:border-color .2s;}
+.legal-back:hover{border-color:var(--wine);}
+.legal-main{flex:1; max-width:760px; width:100%; margin:0 auto; padding:24px 2rem 80px;}
+.legal-main h1{font-family:'Fraunces',serif; font-size:clamp(2rem,4vw,2.8rem); line-height:1.15; margin:0 0 6px;}
+.legal-sub{color:var(--ink-muted); font-style:italic; font-family:'Fraunces',serif; margin:0 0 4px;}
+.legal-updated{color:var(--ink-faint); font-size:.82rem; margin:0 0 36px;}
+.legal-main h2{font-family:'Fraunces',serif; font-size:1.3rem; margin:34px 0 10px; color:var(--ink);}
+.legal-main p,.legal-main li{color:var(--ink-muted); line-height:1.85; font-size:1rem;}
+.legal-main p{margin:0 0 14px;}
+.legal-main ul{padding-left:1.2em; margin:0 0 16px;}
+.legal-main li{margin-bottom:6px;}
+.legal-main a{color:var(--wine); text-decoration:underline; text-underline-offset:3px;}
+.legal-en{display:block; color:var(--ink-faint); font-size:.9rem; font-style:italic; margin-top:2px;}
 
 /* ============ back to top ============ */
 .backtop{position:fixed; right:22px; bottom:22px; z-index:900; width:48px; height:48px; border-radius:50%;
@@ -734,14 +934,14 @@ footer .totop:hover{opacity:1;}
 /* ---- Aurora background (hero) ---- */
 .aurora{position:absolute; top:0; bottom:0; left:50%; width:100vw; margin-left:-50vw;
   z-index:0; overflow:hidden; pointer-events:none;
-  filter:blur(58px); opacity:.72; mix-blend-mode:multiply;}
+  filter:blur(72px); opacity:.4; mix-blend-mode:multiply;}
 .aurora span{position:absolute; display:block; border-radius:50%;}
-.aurora .a1{width:46vw; height:46vw; left:-8%; top:-10%;
-  background:radial-gradient(circle,rgba(178,58,72,.62),transparent 70%); animation:aurora1 18s ease-in-out infinite;}
+.aurora .a1{width:42vw; height:42vw; left:-10%; top:-12%;
+  background:radial-gradient(circle,rgba(178,58,72,.4),transparent 70%); animation:aurora1 18s ease-in-out infinite;}
 .aurora .a2{width:40vw; height:40vw; right:-6%; top:16%;
-  background:radial-gradient(circle,rgba(59,110,165,.56),transparent 70%); animation:aurora2 22s ease-in-out infinite;}
-.aurora .a3{width:36vw; height:36vw; left:26%; bottom:-14%;
-  background:radial-gradient(circle,rgba(203,90,120,.52),transparent 70%); animation:aurora3 20s ease-in-out infinite;}
+  background:radial-gradient(circle,rgba(59,110,165,.36),transparent 70%); animation:aurora2 22s ease-in-out infinite;}
+.aurora .a3{width:34vw; height:34vw; left:26%; bottom:-14%;
+  background:radial-gradient(circle,rgba(203,90,120,.34),transparent 70%); animation:aurora3 20s ease-in-out infinite;}
 @keyframes aurora1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(8%,6%) scale(1.15);}}
 @keyframes aurora2{0%,100%{transform:translate(0,0) scale(1.05);}50%{transform:translate(-7%,9%) scale(.9);}}
 @keyframes aurora3{0%,100%{transform:translate(0,0) scale(.95);}50%{transform:translate(6%,-8%) scale(1.2);}}

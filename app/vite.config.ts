@@ -6,4 +6,15 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  build: {
+    rollupOptions: {
+      // Multi-page build: home + standalone legal pages. Each .html is its own
+      // entry, so /privacy and /terms ship as real, directly-linkable pages.
+      input: {
+        main: './index.html',
+        privacy: './privacy.html',
+        terms: './terms.html',
+      },
+    },
+  },
 })

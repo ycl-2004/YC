@@ -116,6 +116,7 @@ function MotionPortrait({
 export default function Work() {
   return (
     <section className="pad" id="work">
+      <div className="ambient" data-ambient="petal" aria-hidden="true"></div>
       <div className="container">
         <div className="pillars-head reveal">
           <span className="sec-num">03</span>
