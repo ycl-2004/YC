@@ -498,7 +498,11 @@ export function initEffects(): void {
         // the native '?' cursor is hidden, so hint via the custom glow dot instead
         hot.addEventListener('mouseenter', () => dotEl?.classList.add('hint'))
         hot.addEventListener('mouseleave', () => dotEl?.classList.remove('hint'))
-        hot.addEventListener('click', () => {
+        hot.addEventListener('click', (e) => {
+          // .foot-brand is an <a href="./"> — without this the click would
+          // navigate home (scroll to top) and tear the reveal down before it
+          // shows. Back-to-top is reserved for the explicit 回到顶部 button.
+          e.preventDefault()
           if (live) return
           live = true
           const isNew = !found.has(sel)
