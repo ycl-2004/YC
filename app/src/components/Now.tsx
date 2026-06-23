@@ -37,7 +37,7 @@ export default function Now() {
           </dl>
           <button
             type="button"
-            className="now-sign script"
+            className="now-sign deco"
             id="nowVideoTrigger"
             aria-label="播放 YC 影片"
           >

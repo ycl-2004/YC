@@ -563,7 +563,7 @@ section{position:relative;}
 .now-list dt{font-family:'Fraunces','Noto Serif SC',serif; font-style:italic; color:var(--wine); font-weight:600;}
 .now-list dd{margin:0; color:var(--ink-muted); font-size:.95rem;}
 .now-sign{position:absolute; right:clamp(22px,4vw,48px); bottom:10px; color:var(--denim); font-size:1.25rem; opacity:.75;
-  background:none; border:0; padding:4px 2px; font-family:inherit; cursor:pointer; transition:opacity .2s ease, transform .2s ease;}
+  background:none; border:0; padding:4px 2px; font-family:'Fraunces',serif; font-style:italic; cursor:pointer; transition:opacity .2s ease, transform .2s ease;}
 .now-sign:hover{opacity:1; transform:translateX(3px);}
 .now-sign:focus-visible{outline:2px solid var(--denim); outline-offset:3px; opacity:1;}
 
