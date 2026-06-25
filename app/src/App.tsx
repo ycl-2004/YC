@@ -13,7 +13,6 @@ import CTA from './components/CTA'
 import NameCardModal from './components/NameCardModal'
 import SceneLightbox from './components/SceneLightbox'
 import PortraitLightbox from './components/PortraitLightbox'
-import VideoLightbox from './components/VideoLightbox'
 import Footer from './components/Footer'
 
 export default function App() {
@@ -48,7 +47,6 @@ export default function App() {
       <NameCardModal />
       <SceneLightbox />
       <PortraitLightbox />
-      <VideoLightbox />
 
       <p id="shareStatus" role="status" aria-live="polite" className="sr-status"></p>
 

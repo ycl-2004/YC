@@ -35,14 +35,6 @@ export default function Now() {
               </div>
             ))}
           </dl>
-          <button
-            type="button"
-            className="now-sign deco"
-            id="nowVideoTrigger"
-            aria-label="播放 YC 影片"
-          >
-            keep going →
-          </button>
         </div>
       </div>
     </section>

@@ -186,55 +186,6 @@ export function initEffects(): void {
     })
   })
 
-  /* ---- video lightbox (keep going → plays the YC film) ---- */
-  const vlb = document.getElementById('videoLightbox')
-  const vlPlayer = document.getElementById('videoLbPlayer') as HTMLVideoElement | null
-  const vlTrigger = document.getElementById('nowVideoTrigger')
-  let vlOpener: HTMLElement | null = null
-  function openVideoLightbox() {
-    if (!vlb || !vlPlayer) return
-    // Assign the source only now, inside the click gesture: nothing downloads
-    // until the user actually asks for it. faststart + range means it starts
-    // playing after a short buffer, not after the full 46MB. The click is a
-    // user gesture, so play() with audio is allowed.
-    if (!vlPlayer.getAttribute('src')) {
-      vlPlayer.src = asset('assets/final_video_remotion.mp4')
-    }
-    vlb.classList.add('open')
-    document.body.style.overflow = 'hidden'
-    vlPlayer.currentTime = 0
-    void vlPlayer.play().catch(() => {})
-    vlb.querySelector<HTMLButtonElement>('.video-lightbox-close')?.focus()
-  }
-  function closeVideoLightbox() {
-    if (!vlb || !vlPlayer) return
-    vlPlayer.pause()
-    // Drop the source so a closed lightbox keeps no buffer in memory and never
-    // keeps downloading in the background.
-    vlPlayer.removeAttribute('src')
-    vlPlayer.load()
-    vlb.classList.remove('open')
-    document.body.style.overflow = ''
-    vlOpener?.focus()
-    vlOpener = null
-  }
-  if (vlTrigger) {
-    vlTrigger.addEventListener('click', (e) => {
-      e.stopPropagation()
-      vlOpener = vlTrigger
-      openVideoLightbox()
-    })
-  }
-  if (vlb) {
-    vlb.querySelectorAll('[data-close]').forEach((el) => {
-      el.addEventListener('click', closeVideoLightbox)
-    })
-    document.addEventListener('keydown', (e) => {
-      if (!vlb.classList.contains('open')) return
-      if (e.key === 'Escape') closeVideoLightbox()
-    })
-  }
-
   /* ---- reveal on scroll ---- */
   const io = new IntersectionObserver(
     (entries) => {
